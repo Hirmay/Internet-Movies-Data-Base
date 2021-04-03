@@ -177,6 +177,7 @@ def register():
         # Assigning values to save time
         name = request.form.get("name")
         username = request.form.get("username")
+        email_id = request.form.get("email_id")
         password = request.form.get("password")
         password_confirm = request.form.get("password_confirm")
 
@@ -193,7 +194,7 @@ def register():
         password_hash = generate_password_hash(password)
 
         # Adding the new user to database
-        db.execute("INSERT INTO users (name, username, hash) VALUES(?,?,?)", name, username, password_hash)
+        db.execute("INSERT INTO users (name, username, email_id, hash) VALUES(?,?,?,?)", name, username, email_id, password_hash)
 
         # Now extracting the user id
         rows = db.execute("SELECT * FROM users WHERE username=?", username)
