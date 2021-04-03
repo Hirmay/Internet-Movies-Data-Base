@@ -159,7 +159,7 @@ def login():
             return apology("Invalid username and/or password", 403)
         # Remembering the session id
         session["user_id"] = rows[0]["id"]
-        flash("Welcome Back " + rows[0]["name"])
+        flash("Welcome Back " + rows[0]["first_name"])
 
         return redirect("/")
     else:
@@ -175,7 +175,8 @@ def register():
         # Checking for name
 
         # Assigning values to save time
-        name = request.form.get("name")
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
         username = request.form.get("username")
         email_id = request.form.get("email_id")
         password = request.form.get("password")
@@ -194,12 +195,12 @@ def register():
         password_hash = generate_password_hash(password)
 
         # Adding the new user to database
-        db.execute("INSERT INTO users (name, username, email_id, hash) VALUES(?,?,?,?)", name, username, email_id, password_hash)
+        db.execute("INSERT INTO users (first_name, last_name, username, email_id, hash) VALUES(?,?,?,?,?)", first_name,last_name, username, email_id, password_hash)
 
         # Now extracting the user id
         rows = db.execute("SELECT * FROM users WHERE username=?", username)
         session["user_id"] = rows[0]["id"]
-        session["name"] = rows[0]["name"]
+        session["name"] = rows[0]["first_name"]
         flash("Welcome " + session.get("name"))
 
         return redirect("/")
