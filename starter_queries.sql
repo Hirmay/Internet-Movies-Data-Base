@@ -25,10 +25,16 @@ CREATE TABLE movie(
     genre varchar(10),
     rating int CHECK(rating>0 and rating <=10),
     release_date Date,
-    production_company varchar(50) NOT NULL,
     platform varchar(20),
-    FOREIGN KEY (production_company) REFERENCES production_company(company_name),
     FOREIGN KEY (platform) REFERENCES ott_platform(platform_name)
+);
+
+CREATE TABLE movie_produced_by(
+    company_name varchar(50),
+    movie_id varchar(10),
+    PRIMARY KEY (company_name, movie_id),
+    FOREIGN KEY (company_name) REFERENCES Production_company(company_name),
+    FOREIGN KEY (movie_id) REFERENCES movie(movie_id)
 );
 
 CREATE TABLE movie_cast(
@@ -48,10 +54,16 @@ CREATE TABLE tv_show(
     release_year int,
     end_year int CHECK(release_year<end_year),
     genre varchar(10),
-    production_company varchar(50) NOT NULL,
     platform varchar(20),
-    FOREIGN KEY (production_company) REFERENCES production_company(company_name),
     FOREIGN KEY (platform) REFERENCES ott_platform(platform_name)
+);
+
+CREATE TABLE show_produced_by(
+    company_name varchar(50),
+    show_id varchar(10),
+    PRIMARY KEY (company_name, show_id),
+    FOREIGN KEY (company_name) REFERENCES Production_company(company_name),
+    FOREIGN KEY (show_id) REFERENCES tv_show(show_id)
 );
 
 CREATE TABLE show_cast(
