@@ -106,3 +106,6 @@ CREATE TABLE show_cast(
 -- DROP TABLE ott_platform;
 -- DROP TABLE Production_company;
 -- DROP TABLE Person;
+
+-- Changes to be done
+-- foreign key constraints names to add, users add hash field, in review replace email with username.
