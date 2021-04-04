@@ -35,7 +35,8 @@ CREATE TABLE db_user(
     email varchar(50) PRIMARY KEY,
     username varchar(20) UNIQUE,
     firstname varchar(20) NOT NULL, 
-    lastname varchar(20) NOT NULL
+    lastname varchar(20) NOT NULL,
+    hash varchar(100) NOT NULL
 );
 
 CREATE TABLE review(
@@ -44,9 +45,9 @@ CREATE TABLE review(
     content varchar(1000),
     up_votes int,
     movie_id varchar(10),
-    email varchar(10),
+    username varchar(20),
     FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
-    FOREIGN KEY (email) REFERENCES db_user(email)
+    FOREIGN KEY (username) REFERENCES db_user(username)
 );
 
 CREATE TABLE movie_produced_by(
@@ -108,4 +109,4 @@ CREATE TABLE show_cast(
 -- DROP TABLE Person;
 
 -- Changes to be done
--- foreign key constraints names to add, users add hash field, in review replace email with username.
+-- foreign key constraints names to add, users add hash field(done), in review replace email with username(done).
