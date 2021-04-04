@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, jsonify, session
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import psycopg2
+from flask_session import Session
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
@@ -9,51 +8,54 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 
-# Session = sessionmaker(bind = engine)
-# session = Session()
 
 # IMPORTANT
-# APP_SETTINGS = "config.DevelopmentConfig"
-# DATABASE_URL="postgresql://postgres:tirth177@localhost/mwdb"
-# app.config.from_object(APP_SETTINGS)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# Change this your postes will be linked
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:tirth177@localhost/mwdb"
+con = psycopg2.connect(
+    database = 'mwdb',
+    user = 'postgres',
+    password = 'tirth177',
+    host = 'localhost',
+)
 
-db = SQLAlchemy(app)
-# migrate = Migrate(app, db)
+# Cursor Testing
+cur = con.cursor()
+print('Postgres Version: ')
+cur.execute("Select version()")
+db_version = cur.fetchone()
+print(db_version)
+
 
 # @app.route("/")
 # def hello():
 #     return "Hello"
 
-class db_user(db.Model):
-    __tablename__ = 'db_user'
+# class db_user(db.Model):
+#     __tablename__ = 'db_user'
 
-    email = db.Column(db.String(50),primary_key=True, nullable=False)
-    username = db.Column(db.String(20), unique=True)
-    firstname = db.Column(db.String(20), nullable = False)
-    lastname = db.Column(db.String(20), nullable = False)
-    hashh = db.Column(db.String(100), nullable = False)
+#     email = db.Column(db.String(50),primary_key=True, nullable=False)
+#     username = db.Column(db.String(20), unique=True)
+#     firstname = db.Column(db.String(20), nullable = False)
+#     lastname = db.Column(db.String(20), nullable = False)
+#     hashh = db.Column(db.String(100), nullable = False)
 
-    def __init__(self, email, username, firstname, hashh):
-        self.email = email
-        self.username = username
-        self.firstname = firstname
-        self.lastname = lastname
-        self.hashh = hashh
+#     def __init__(self, email, username, firstname, hashh):
+#         self.email = email
+#         self.username = username
+#         self.firstname = firstname
+#         self.lastname = lastname
+#         self.hashh = hashh
 
-    def __repr__(self):
-        return '<username {}>'.format(self.username)
+#     def __repr__(self):
+#         return '<username {}>'.format(self.username)
     
-    def serialize(self):
-        return {
-            'email': self.email, 
-            'username': self.username,
-            'firstname': self.firstname,
-            'lastname': self.lastname,
-            'hashh': self.hashh
-        }
+#     def serialize(self):
+#         return {
+#             'email': self.email, 
+#             'username': self.username,
+#             'firstname': self.firstname,
+#             'lastname': self.lastname,
+#             'hashh': self.hashh
+#         }
 
 
 # Login
@@ -98,11 +100,11 @@ def login():
         password = request.form.get("password")
 
         # Checking if the username or password are correct or not
-        rows = db.execute("SELECT * FROM db_user WHERE username=?", username)
+        rows = cur.execute("SELECT * FROM db_user WHERE username=?", username)
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
             return apology("Invalid username and/or password", 403)
         # Remembering the session id
-        db.session["user_id"] = rows[0]["id"]
+        session["username"] = rows[0]["username"]
         flash("Welcome Back " + rows[0]["first_name"])
 
         return redirect("/")
@@ -127,7 +129,7 @@ def register():
         password_confirm = request.form.get("password_confirm")
 
         # Checking if the username is already taken
-        rows = db.execute("SELECT * FROM users WHERE username=?", username)
+        rows = cur.execute("SELECT * FROM db_user WHERE username=?", username)
 
         if len(rows) != 0:
             return apology("Username is Taken", 403)
@@ -139,26 +141,19 @@ def register():
         password_hash = generate_password_hash(password)
 
         # Adding the new user to database
-        db.execute("INSERT INTO users (first_name, last_name, username, email_id, hash) VALUES(?,?,?,?,?)", first_name,last_name, username, email_id, password_hash)
+        cur.execute("INSERT INTO db_user (first_name, last_name, username, email_id, hash) VALUES(?,?,?,?,?)", first_name,last_name, username, email_id, password_hash)
 
         # Now extracting the user id
-        rows = db.execute("SELECT * FROM users WHERE username=?", username)
-        db.session["user_id"] = rows[0]["id"]
-        db.session["name"] = rows[0]["first_name"]
-        flash("Welcome " + db.session.get("name"))
+        rows = cur.execute("SELECT * FROM db_user WHERE username=?", username)
+        session["username"] = rows[0]["username"]
+        session["name"] = rows[0]["first_name"]
+        flash("Welcome " + session.get("name"))
 
         return redirect("/")
     else:
         return render_template("register.html")
 
 
-@app.route("/getall")
-def get_all():
-    try:
-        books= db_user.query.all()
-        return  jsonify([e.serialize() for e in books])
-    except Exception as e:
-	    return(str(e))
-
 if __name__ == '__main__':
+    app.secret_key = 'super secret key'
     app.run()
