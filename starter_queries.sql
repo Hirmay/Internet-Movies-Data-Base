@@ -109,17 +109,17 @@ CREATE TABLE show_cast(
     FOREIGN KEY (person_id) REFERENCES person(person_id)
 );
 
--- DROP TABLE show_cast;
--- DROP TABLE show_produced_by;
--- DROP TABLE tv_show;
--- DROP TABLE movie_cast;
--- DROP TABLE movie_produced_by;
--- DROP TABLE review;
--- DROP TABLE user;
--- DROP TABLE movie;
--- DROP TABLE ott_platform;
--- DROP TABLE Production_company;
--- DROP TABLE Person;
+DROP TABLE show_cast;
+DROP TABLE show_produced_by;
+DROP TABLE tv_show;
+DROP TABLE movie_cast;
+DROP TABLE movie_produced_by;
+DROP TABLE review;
+DROP TABLE user;
+DROP TABLE movie;
+DROP TABLE ott_platform;
+DROP TABLE Production_company;
+DROP TABLE Person;
 
 -- Changes to be done
 -- foreign key constraints names to add(done), users add hash field(done), in review replace email with username(done).
