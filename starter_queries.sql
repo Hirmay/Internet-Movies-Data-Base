@@ -27,7 +27,9 @@ CREATE TABLE movie(
     release_date Date,
     platform varchar(20),
     director varchar(10),
+    CONSTRAINT fk_movie_director
     FOREIGN KEY (director) REFERENCES Person(person_id),
+    CONSTRAINT fk_movie_platform
     FOREIGN KEY (platform) REFERENCES ott_platform(platform_name)
 );
 
@@ -46,7 +48,9 @@ CREATE TABLE review(
     up_votes int,
     movie_id varchar(10),
     username varchar(20),
+    CONSTRAINT fk_review_movie_id
     FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
+    CONSTRAINT fk_review_username
     FOREIGN KEY (username) REFERENCES db_user(username)
 );
 
@@ -54,7 +58,9 @@ CREATE TABLE movie_produced_by(
     company_name varchar(50),
     movie_id varchar(10),
     PRIMARY KEY (company_name, movie_id),
+    CONSTRAINT fk_movie_company
     FOREIGN KEY (company_name) REFERENCES Production_company(company_name),
+    CONSTRAINT fk_produced_movie_id
     FOREIGN KEY (movie_id) REFERENCES movie(movie_id)
 );
 
@@ -63,7 +69,9 @@ CREATE TABLE movie_cast(
     person_id varchar(10),
     role varchar(40),
     PRIMARY KEY (movie_id, person_id, role),
+    CONSTRAINT fk_cast_movie_id
     FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
+    CONSTRAINT fk_cast_person_id
     FOREIGN KEY (person_id) REFERENCES person(person_id)
 );
 
@@ -76,6 +84,7 @@ CREATE TABLE tv_show(
     end_year int CHECK(release_year<end_year),
     genre varchar(10),
     platform varchar(20),
+    CONSTRAINT fk_tv_platform
     FOREIGN KEY (platform) REFERENCES ott_platform(platform_name)
 );
 
@@ -83,7 +92,9 @@ CREATE TABLE show_produced_by(
     company_name varchar(50),
     show_id varchar(10),
     PRIMARY KEY (company_name, show_id),
+    CONSTRAINT fk_tv_company
     FOREIGN KEY (company_name) REFERENCES Production_company(company_name),
+    CONSTRAINT fk_producer_show
     FOREIGN KEY (show_id) REFERENCES tv_show(show_id)
 );
 
@@ -92,7 +103,9 @@ CREATE TABLE show_cast(
     person_id varchar(10),
     role varchar(40),
     PRIMARY KEY (show_id, person_id, role),
+    CONSTRAINT fk_cast_show_id
     FOREIGN KEY (show_id) REFERENCES tv_show(show_id),
+    CONSTRAINT fk_cast_person_id
     FOREIGN KEY (person_id) REFERENCES person(person_id)
 );
 
@@ -109,4 +122,7 @@ CREATE TABLE show_cast(
 -- DROP TABLE Person;
 
 -- Changes to be done
--- foreign key constraints names to add, users add hash field(done), in review replace email with username(done).
+-- foreign key constraints names to add(done), users add hash field(done), in review replace email with username(done).
+
+
+-- Solve the issue of tv_id and movie_id
