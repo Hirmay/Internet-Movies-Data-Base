@@ -72,7 +72,6 @@ def apology(message, code=400):
     def escape(s):
         """
         Escape special characters.
-
         https://github.com/jacebrowning/memegen#special-characters
         """
         for old, new in [("-", "--"), (" ", "-"), ("_", "__"), ("?", "~q"),
@@ -103,11 +102,11 @@ def login():
         
         cur.execute("SELECT * FROM db_user WHERE username=%s", [username])
         rows = cur.fetchall()
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
+        if len(rows) != 1 or not check_password_hash(rows[0][4], password):
             return apology("Invalid username and/or password", 403)
         # Remembering the session id
-        session["username"] = rows[0]["username"]
-        flash("Welcome Back " + rows[0]["first_name"])
+        session["username"] = rows[0][1]
+        flash("Welcome Back " + rows[0][2])
 
         return redirect("/")
     else:
@@ -167,4 +166,5 @@ def register():
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'
+    app.debug = True
     app.run()
