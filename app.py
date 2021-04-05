@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, jsonify, session
+from flask import Flask, render_template, request, redirect, jsonify, session, flash
 import psycopg2
-from flask_session import Session
+# from Flask-Session import Session
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
 
 app = Flask(__name__)
 
@@ -100,7 +100,9 @@ def login():
         password = request.form.get("password")
 
         # Checking if the username or password are correct or not
-        rows = cur.execute("SELECT * FROM db_user WHERE username=?", username)
+        
+        cur.execute("SELECT * FROM db_user WHERE username=%s", [username])
+        rows = cur.fetchall()
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
             return apology("Invalid username and/or password", 403)
         # Remembering the session id
@@ -129,7 +131,9 @@ def register():
         password_confirm = request.form.get("password_confirm")
 
         # Checking if the username is already taken
-        rows = cur.execute("SELECT * FROM db_user WHERE username=?", username)
+        cur.execute("SELECT * FROM db_user WHERE username=%s", [username])
+
+        rows = cur.fetchall()
 
         if len(rows) != 0:
             return apology("Username is Taken", 403)
@@ -141,17 +145,24 @@ def register():
         password_hash = generate_password_hash(password)
 
         # Adding the new user to database
-        cur.execute("INSERT INTO db_user (first_name, last_name, username, email_id, hash) VALUES(?,?,?,?,?)", first_name,last_name, username, email_id, password_hash)
-
+        cur.execute("INSERT INTO db_user (firstname, lastname, username, email, hash) VALUES(%s,%s,%s,%s,%s)", [first_name,last_name, username, email_id, password_hash])
+        con.commit()
         # Now extracting the user id
-        rows = cur.execute("SELECT * FROM db_user WHERE username=?", username)
-        session["username"] = rows[0]["username"]
-        session["name"] = rows[0]["first_name"]
+        
+        cur.execute("SELECT * FROM db_user WHERE username=%s", [username])
+        rows = cur.fetchall()
+        # print(rows)
+        session["username"] = rows[0][1]
+        session["name"] = rows[0][2]
         flash("Welcome " + session.get("name"))
 
         return redirect("/")
     else:
         return render_template("register.html")
+
+
+# @app.route('\show')
+# def show():
 
 
 if __name__ == '__main__':
