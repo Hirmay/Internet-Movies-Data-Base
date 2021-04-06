@@ -22,8 +22,8 @@ CREATE TABLE movie(
     movie_id varchar(10) PRIMARY KEY,
     title varchar(40) NOT NULL,
     production_cost int,
-    genre varchar(10),
     rating float CHECK(rating>0 and rating <=10),
+    rated varchar(10),
     release_date Date,
     platform varchar(20),
     director varchar(10),
@@ -33,15 +33,23 @@ CREATE TABLE movie(
     FOREIGN KEY (platform) REFERENCES ott_platform(platform_name)
 );
 
+CREATE TABLE movie_genre(
+    movie_id varchar(10),
+    genre varchar(10),
+    FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
+    PRIMARY KEY (movie_id, genre)
+);
+
 CREATE TABLE db_user(
     email varchar(50) PRIMARY KEY,
     username varchar(20) UNIQUE,
+    date_of_birth DATE,
     firstname varchar(20) NOT NULL, 
     lastname varchar(20) NOT NULL,
     hash varchar(100) NOT NULL
 );
 
-CREATE TABLE review(
+CREATE TABLE movie_review(
     review_id varchar(10) PRIMARY KEY,
     posted_on Date,
     content varchar(1000),
@@ -78,14 +86,34 @@ CREATE TABLE movie_cast(
 CREATE TABLE tv_show(
     show_id varchar(10) PRIMARY KEY,
     title varchar(40) NOT NULL,
-    rating int CHECK(rating>0 and rating <=10),
+    rating float CHECK(rating>0 and rating <=10),
+    rated varchar(20),
     seasons int,
     release_year int,
     end_year int CHECK(release_year<end_year),
-    genre varchar(10),
     platform varchar(20),
     CONSTRAINT fk_tv_platform
     FOREIGN KEY (platform) REFERENCES ott_platform(platform_name)
+);
+
+CREATE TABLE show_review(
+    review_id varchar(10) PRIMARY KEY,
+    posted_on Date,
+    content varchar(1000),
+    up_votes int,
+    show_id varchar(10),
+    username varchar(20),
+    CONSTRAINT fk_review_show_id
+    FOREIGN KEY (show_id) REFERENCES tv_show(show_id),
+    CONSTRAINT fk_show_review_username
+    FOREIGN KEY (username) REFERENCES db_user(username)
+);
+
+CREATE TABLE show_genre(
+    show_id varchar(10),
+    genre varchar(10),
+    FOREIGN KEY (show_id) REFERENCES tv_show(show_id),
+    PRIMARY KEY (show_id, genre)
 );
 
 CREATE TABLE show_produced_by(
@@ -120,9 +148,5 @@ DROP TABLE movie;
 DROP TABLE ott_platform;
 DROP TABLE Production_company;
 DROP TABLE Person;
-
--- Changes to be done
--- foreign key constraints names to add(done), users add hash field(done), in review replace email with username(done).
-
-
--- Solve the issue of tv_id and movie_id
+DROP TABLE show_genre;
+DROP TABLE movie_genre;
