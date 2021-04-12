@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    quote
+{% endblock %}
+
+{% block main %}
+    <div class="alert alert-primary" role="alert">
+        The commodity {{commodity}} of variety {{ variety }} has min price of {{ info_table[0].get("min_price") }}₹,
+        max price of {{ info_table[0].get("max_price") }}₹ and thus average of  {{ info_table[0].get("modal_price") }}₹.
+    </div>
+{% endblock %}
