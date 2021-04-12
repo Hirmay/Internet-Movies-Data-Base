@@ -1,6 +1,6 @@
 CREATE DATABASE mwdb;
 
-CREATE TABLE Person(
+CREATE TABLE celebrity(
     person_id varchar(10) PRIMARY KEY,
     firstname varchar(20) NOT NULL,
     lastname varchar(20) NOT NULL,
@@ -26,9 +26,10 @@ CREATE TABLE movie(
     rated varchar(10),
     release_date Date,
     platform varchar(20),
+    likes int,
     director varchar(10),
     CONSTRAINT fk_movie_director
-    FOREIGN KEY (director) REFERENCES Person(person_id),
+    FOREIGN KEY (director) REFERENCES celebrity(person_id),
     CONSTRAINT fk_movie_platform
     FOREIGN KEY (platform) REFERENCES ott_platform(platform_name)
 );
@@ -46,7 +47,8 @@ CREATE TABLE db_user(
     date_of_birth DATE,
     firstname varchar(20) NOT NULL, 
     lastname varchar(20) NOT NULL,
-    hash varchar(100) NOT NULL
+    hash varchar(100) NOT NULL,
+    warning int
 );
 
 CREATE TABLE movie_review(
@@ -80,7 +82,7 @@ CREATE TABLE movie_cast(
     CONSTRAINT fk_cast_movie_id
     FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
     CONSTRAINT fk_cast_person_id
-    FOREIGN KEY (person_id) REFERENCES person(person_id)
+    FOREIGN KEY (person_id) REFERENCES celebrity(person_id)
 );
 
 CREATE TABLE tv_show(
@@ -134,19 +136,26 @@ CREATE TABLE show_cast(
     CONSTRAINT fk_cast_show_id
     FOREIGN KEY (show_id) REFERENCES tv_show(show_id),
     CONSTRAINT fk_cast_person_id
-    FOREIGN KEY (person_id) REFERENCES person(person_id)
+    FOREIGN KEY (person_id) REFERENCES celebrity(person_id)
 );
 
 DROP TABLE show_cast;
 DROP TABLE show_produced_by;
 DROP TABLE tv_show;
+DROP TABLE movie_review;
+DROP TABLE show_review;
 DROP TABLE movie_cast;
 DROP TABLE movie_produced_by;
 DROP TABLE review;
-DROP TABLE user;
+DROP TABLE db_user;
+DROP TABLE db_user;
 DROP TABLE movie;
 DROP TABLE ott_platform;
 DROP TABLE Production_company;
 DROP TABLE Person;
+DROP TABLE celebrity;
 DROP TABLE show_genre;
 DROP TABLE movie_genre;
+
+
+
