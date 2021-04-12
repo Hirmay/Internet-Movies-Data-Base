@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+    <head>
+        <!-- Required meta tags -->
+        <!--This is so that entered text can be machine readable code-->
+        <meta charset="utf-8">
+        <!--This is so that the website can also be viewed on mobile and tablets without any inconvinience.-->
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- makes life easy as many of the inbuilt functions can make a very good gui no matter what you have to  -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+        <!-- for icon at tab -->
+        <link href="https://bs-uploads.toptal.io/blackfish-uploads/components/skill_page/content/logo_file/logo/195568/sql-64a6e0f07773cf17581e76ca09e17dbc.png" rel="icon">
+        <!-- For CSS -->
+        <link href="/static/styles.css" rel="stylesheet">
+
+        <!-- Don't know-->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+        <title>MWDB:{% block title %}{% endblock %}</title>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-md navbar-light bg-light border">
+            <!--getting a button to redirect towards homepage-->
+            <a class="navbar-brand" href="/"><span class="orange">M</span><span class="white">W</span><span class="green">D</span><span class="gold">B</span><span class="blue"> Movie Web-Series Database</span></a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <!-- if the user is logged in/ registered-->
+                {% if session.username %}
+                    <ul class="navbar-nav mr-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/info">Movies</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/loan">Web Shows</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/quote">My Watchlist</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/search">Search</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                    </ul>
+                <!-- else show the user option to register or login-->
+                {% else %}
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+
+
+        <!-- to flash messages for better design -->
+        {% if get_flashed_messages() %}
+            <header>
+                <div class="alert alert-primary border text-center" role="alert">
+                    {{ get_flashed_messages() | join(" ") }}
+                </div>
+            </header>
+        {% endif %}
+        <!-- For having a similar format across templates-->
+        <main class="container p-5">
+            {% block main %}{% endblock %}
+        </main>
+
+        <script>{% block script %}{% endblock %}</script>
+    </body>
