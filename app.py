@@ -7,12 +7,7 @@ from functools import wraps
 from wtforms import Form, StringField, SelectField
 
 
-class Search_M_W(Form):
-    choices = [('Movie', 'Movie'),
-               ('Web-Series', 'Web-Series'), ('Celebrity', 'Celebrity'),
-              ('Director', 'Director')]
-    select = SelectField('Search:', choices=choices)
-    search = StringField('')
+
 # from flask_migrate import Migrate
 
 app = Flask(__name__)
@@ -67,11 +62,40 @@ print(db_version)
 #         }
 
 
+# Creating a search class for search function
+class Search_M_W(Form):
+    choices = [('Movie', 'Movie'),
+               ('Web-Series', 'Web-Series'), ('Celebrity', 'Celebrity'),
+              ('Director', 'Director')]
+    select = SelectField('Search:', choices=choices)
+    search = StringField('')
+
+class ADD_M_W(Form):
+    choices = [('Movie', 'Movie'),
+               ('Web-Series', 'Web-Series')]
+    select = SelectField('Add a Movie or Web-Series:', choices=choices)
+    search = StringField('')  
+    
+class DELETE_M_W(Form):
+    choices = [('Movie', 'Movie'),
+               ('Web-Series', 'Web-Series')]
+    select = SelectField('Delete a Movie or Web-Series:', choices=choices)
+    search = StringField('')       
+    
 # Login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("username") is None:
+            return redirect("/register")
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Admin only redirection
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("username") != "admin":
             return redirect("/register")
         return f(*args, **kwargs)
     return decorated_function
@@ -95,14 +119,95 @@ def apology(message, code=400):
 def index():
     return render_template("index.html")
 
+@app.route("/admin")
+@admin_only
+def admin():
+    return render_template("admin.html")
+
+@app.route("/admin-add")
+@admin_only
+def admin_add():
+    search = ADD_M_W(request.form)
+    
+    if request.method == "POST":
+        results = []
+        search_string = search.data['search']
+        if search.data['search'] == '':
+            results = 'abc'
+            # Run query to see results
+        if not results:
+            flash('No results found!')
+            return render_template('admin_add.html', form=search)
+        else:
+            # display results
+            return render_template('searched.html', results=results, form=search) 
+    else:
+        return render_template("admin_add.html", form=search)
+
+@app.route("/admin-delete")
+@admin_only
+def admin_delete():
+    search = DELETE_M_W(request.form)
+    
+    if request.method == "POST":
+        results = []
+        search_string = search.data['search']
+        if search.data['search'] == '':
+            results = 'abc'
+            # Run query to see results
+        if not results:
+            flash('No results found!')
+            return render_template('admin_delete.html', form=search)
+        else:
+            # display results
+            return render_template('delete_searched.html', results=results, form=search) 
+    else:
+        return render_template("admin_delete.html", form=search)    
+    
+"""@app.route("/adminadd", methods=["GET", "POST"])
+@admin_only
+def admin_add():
+    return render_template("admin_add.html")
+
+@app.route("/admindelete", methods=["GET", "POST"])
+@admin_only
+def admin_add():
+    return render_template("admin_delete.html")"""
+
 @app.route("/search", methods=["GET", "POST"])
 @login_required
 def search():
     search = Search_M_W(request.form)
+    
     if request.method == "POST":
-        return render_template("searched.html")
+        results = []
+        search_string = search.data['search']
+        if search.data['search'] == '':
+            results = 'abc'
+            # Run query to see results
+        if not results:
+            flash('No results found!')
+            return render_template('search.html', form=search)
+        else:
+            # display results
+            return render_template('searched.html', results=results, form=search) 
     else:
         return render_template("search.html", form=search)
+    
+    
+@app.route('/searched')
+def searched(search):
+    results = []
+    search_string = search.data['search']
+    if search.data['search'] == '':
+        results = 'abc'
+        # Run query to see results
+    if not results:
+        flash('No results found!')
+        return render_template('searched.html',results=results, form=search)
+    else:
+        # display results
+        return render_template('searched.html', results=results, form=search)    
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -121,10 +226,15 @@ def login():
         rows = cur.fetchall()
         if len(rows) != 1 or not check_password_hash(rows[0][5], password):
             return apology("Invalid username and/or password", 403)
+        
         # Remembering the session id
         session["username"] = rows[0][1]
         flash("Welcome Back " + rows[0][3])
-
+        
+        # Checking if the user is admin
+        if rows[0][1] == "admin":
+            return redirect("/admin")
+        
         return redirect("/")
     else:
         return render_template("login.html")
