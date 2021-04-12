@@ -4,6 +4,15 @@ import psycopg2
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
+from wtforms import Form, StringField, SelectField
+
+
+class Search_M_W(Form):
+    choices = [('Movie', 'Movie'),
+               ('Web-Series', 'Web-Series'), ('Celebrity', 'Celebrity'),
+              ('Director', 'Director')]
+    select = SelectField('Search:', choices=choices)
+    search = StringField('')
 # from flask_migrate import Migrate
 
 app = Flask(__name__)
@@ -86,6 +95,14 @@ def apology(message, code=400):
 def index():
     return render_template("index.html")
 
+@app.route("/search", methods=["GET", "POST"])
+@login_required
+def search():
+    search = Search_M_W(request.form)
+    if request.method == "POST":
+        return render_template("searched.html")
+    else:
+        return render_template("search.html", form=search)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -102,11 +119,11 @@ def login():
         
         cur.execute("SELECT * FROM db_user WHERE username=%s", [username])
         rows = cur.fetchall()
-        if len(rows) != 1 or not check_password_hash(rows[0][4], password):
+        if len(rows) != 1 or not check_password_hash(rows[0][5], password):
             return apology("Invalid username and/or password", 403)
         # Remembering the session id
         session["username"] = rows[0][1]
-        flash("Welcome Back " + rows[0][2])
+        flash("Welcome Back " + rows[0][3])
 
         return redirect("/")
     else:
@@ -124,11 +141,12 @@ def register():
         # Assigning values to save time
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
+        dob = request.form.get("dob")
         username = request.form.get("username")
         email_id = request.form.get("email_id")
         password = request.form.get("password")
         password_confirm = request.form.get("password_confirm")
-
+        
         # Checking if the username is already taken
         cur.execute("SELECT * FROM db_user WHERE username=%s", [username])
 
@@ -144,7 +162,7 @@ def register():
         password_hash = generate_password_hash(password)
 
         # Adding the new user to database
-        cur.execute("INSERT INTO db_user (firstname, lastname, username, email, hash) VALUES(%s,%s,%s,%s,%s)", [first_name,last_name, username, email_id, password_hash])
+        cur.execute("INSERT INTO db_user (firstname, lastname, date_of_birth, username, email, hash) VALUES(%s,%s,%s,%s,%s,%s)", [first_name,last_name, dob, username, email_id, password_hash])
         con.commit()
         # Now extracting the user id
         
@@ -152,14 +170,19 @@ def register():
         rows = cur.fetchall()
         # print(rows)
         session["username"] = rows[0][1]
-        session["name"] = rows[0][2]
+        session["name"] = rows[0][3]
         flash("Welcome " + session.get("name"))
 
         return redirect("/")
     else:
         return render_template("register.html")
 
-
+@app.route("/logout")
+def logout():
+    # logs out users
+    session.clear()
+    return redirect("/")
+    
 # @app.route('\show')
 # def show():
 
