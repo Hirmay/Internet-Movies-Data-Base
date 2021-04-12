@@ -1,0 +1,13 @@
+movie_id,title,production_cost,rating,rated,Year,platform,likes,runtime,Director
+1,The Shawshank Redemption,28.34,9.3,R,05-01-1994,,1934970,142,101
+2,The Godfather,134.97,9.2,R,05-01-1972,,1323670,175,102
+3,The Dark Knight,534.86,9,R,05-01-2008,,1905413,152,103
+4,The Godfather: Part II,57.3,9,R,05-01-1974,,914854,202,102
+5,Schindler's List,96.07,8.9,R,05-01-1993,,997570,195,104
+6,The Lord of the Rings: The Return of the King,377.85,8.9,PG-13,05-01-2003,,1381275,201,105
+7,Inception,292.58,8.8,PG-13,05-01-2010,,1692709,148,103
+8,The Lord of the Rings: The Fellowship of the Ring,315.54,8.8,PG-13,05-01-2001,,1400549,178,105
+9,Fight Club,37.03,8.8,R,05-01-1999,,1549429,139,106
+10,The Lord of the Rings: The Two Towers,342.55,8.7,PG-13,05-01-2002,,1250370,179,105
+11,Interstellar,188.02,8.6,PG-13,05-01-2014,,1160405,169,103
+12,Dangal,12.39,8.6,PG-13,05-01-2002,,90612,161,107
