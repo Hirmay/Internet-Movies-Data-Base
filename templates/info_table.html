@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Admin
+{% endblock %}
+
+{% block main %}
+    <form action="/loan" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="amount" type="number" min="1000" required title="Can not have the field empty" placeholder="Amount">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="years" placeholder="Years" min="1" required title="Can not have the field empty" type="number">
+        </div>
+        <button class="btn btn-primary" type="submit">Get Loan</button>
+    </form>
+    <div class="alert alert-primary" role="alert">
+        Get A loan today with the compound interest of 8.5%.
+    </div>
+{% endblock %}

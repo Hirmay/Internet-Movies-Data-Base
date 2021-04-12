@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    search
+{% endblock %}
+
+{% block main %}
+
+{% from "form_help.html" import render_field %}
+<form method="post">
+  <dl>
+    {{ render_field(form.select) }}
+    <p>
+    {{ render_field(form.search) }}
+  </p></dl>
+  <p><input type="submit" value="Search">
+</p></form>
+</doctype>
+
+    <div class="alert alert-primary" role="alert">
+        Know your celebs, movies, web-series and directors.
+    </div>
+
+{% endblock %}
