@@ -4,8 +4,7 @@ import psycopg2
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
-from wtforms import Form, StringField, SelectField
-
+from classes import *
 
 
 # from flask_migrate import Migrate
@@ -17,7 +16,7 @@ app = Flask(__name__)
 con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
-    password = 'tirth177',
+    password = '123ketki',
     host = 'localhost',
 )
 
@@ -62,25 +61,7 @@ print(db_version)
 #         }
 
 
-# Creating a search class for search function
-class Search_M_W(Form):
-    choices = [('Movie', 'Movie'),
-               ('Web-Series', 'Web-Series'), ('Celebrity', 'Celebrity'),
-              ('Director', 'Director')]
-    select = SelectField('Search:', choices=choices)
-    search = StringField('')
-
-class ADD_M_W(Form):
-    choices = [('Movie', 'Movie'),
-               ('Web-Series', 'Web-Series')]
-    select = SelectField('Add a Movie or Web-Series:', choices=choices)
-    search = StringField('')  
-    
-class DELETE_M_W(Form):
-    choices = [('Movie', 'Movie'),
-               ('Web-Series', 'Web-Series')]
-    select = SelectField('Delete a Movie or Web-Series:', choices=choices)
-    search = StringField('')       
+     
     
 # Login
 def login_required(f):
