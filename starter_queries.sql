@@ -140,6 +140,10 @@ CREATE TABLE show_cast(
     FOREIGN KEY (person_id) REFERENCES celebrity(person_id)
 );
 
+CREATE TABLE abusive_words(
+    words varchar(20)
+);
+
 DROP TABLE show_cast;
 DROP TABLE show_produced_by;
 DROP TABLE movie_review;
@@ -157,6 +161,7 @@ DROP TABLE movie_genre;
 DROP TABLE tv_show;
 DROP TABLE movie;
 DROP TABLE ott_platform;
+DROP TABLE abusive_words;
 
 
 
