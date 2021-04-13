@@ -140,6 +140,16 @@ CREATE TABLE show_cast(
     FOREIGN KEY (person_id) REFERENCES celebrity(person_id)
 );
 
+CREATE TABLE filtered_movies(
+	movie_id varchar(10)
+);
+
+CREATE TABLE wishlist(
+    username varchar(20),
+    movie_id varchar(10)
+);
+
+
 CREATE TABLE abusive_words(
     words varchar(20)
 );
