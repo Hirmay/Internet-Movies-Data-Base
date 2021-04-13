@@ -103,9 +103,19 @@ def index():
     rows = cur.fetchall()
     # print(row)
     # print(rows[1])
-    return render_template("index.html", movies=rows)
+    return render_template("index.html", movies=rows, l=len(rows))
     # flash(e, "error")
     
+
+@app.route("/error")
+def show_error():
+    try:
+        cur.execute("call error_gen();")
+    except Exception as e:
+        s = e
+    flash(s)
+    return render_template('show_error_temp.html')
+
 
 @app.route("/admin")
 @admin_only
