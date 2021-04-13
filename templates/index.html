@@ -4,3 +4,16 @@
     Homepage
 {% endblock %}
 
+{% block body %}
+    <h2>Movies</h2> 
+    <ol>
+    {% for movie in movies %}
+        <li>{{ movie[1] }}</li>
+    {% endfor %}
+    </ol>
+    <h2> TV Shows
+    </h2>
+    <ol>
+        
+    </ol>
+{% endblock %}

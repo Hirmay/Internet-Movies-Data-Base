@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    <p> {{ msg }}  </p> 
+{% endblock %}
+
+try:
+            try:
+                cur.execute("INSERT INTO login(username, user_password, isAdmin, isSuperAdmin) VALUES(%s, %s, %s, %s)", (username, password, False, False))
+                # NB : you won't get an IntegrityError when reading
+            except (mysql.connection.Error, mysql.connection.Warning) as e:
+                print("----------------->")
+                print(e)
+                flash('hello','danger')
+                return render_template('Register_2.html',form=form)
+
+            row = cur.fetchone()
+            if row:
+                return row[0]
+            return None
+
+        finally:
+            cur.close()

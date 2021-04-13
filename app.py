@@ -16,7 +16,7 @@ app = Flask(__name__)
 con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
-    password = '123ketki',
+    password = 'tirth177',
     host = 'localhost',
 )
 
@@ -98,7 +98,14 @@ def apology(message, code=400):
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    cur.execute("SELECT * FROM movie;")
+    # row = cur.fetchone()
+    rows = cur.fetchall()
+    # print(row)
+    # print(rows[1])
+    return render_template("index.html", movies=rows)
+    # flash(e, "error")
+    
 
 @app.route("/admin")
 @admin_only
