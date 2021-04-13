@@ -1,3 +1,7 @@
+CREATE TABLE filtered_movies(
+	movie_id varchar(10)
+);
+
 CREATE OR REPLACE PROCEDURE filter_movies(
 	released_after date default '1000-01-01', 
 	released_before date default CURRENT_DATE,
@@ -8,18 +12,26 @@ CREATE OR REPLACE PROCEDURE filter_movies(
 )
 LANGUAGE plpgsql
 AS $$
+DECLARE
+	r_movie record;
 BEGIN
 	delete from filtered_movies;
-	insert into filtered_movies select distinct movie_genre.movie_id from movie_genre, movie 
-	where(
-		SUBSTR(movie_genre.genre,1,LENGTH(gen))=gen and movie_genre.movie_id=movie.movie_id and
-		movie.release_date >= release_after and movie.release_date <= release_before and 
-		movie.rating>=min_rating and movie.rating<=max_rating and 
-		SUBSTR(movie.platform,1,LENGTH(plat))=plat
-	);
-	select * from filtered_movies;
+	for r_movie in select distinct movie_genre.movie_id from movie_genre, movie 
+	 where(
+		 movie.release_date >= released_after 
+		 and movie.release_date<= released_before 
+		 and movie_genre.movie_id = movie.movie_id 
+		 and (movie_genre.genre = gen or gen ='') 
+		 and movie.rating >= min_rating 
+		 and movie.rating <= max_rating 
+		 and (contains(movie.platform,plat) or plat = '')
+	  ) loop
+	  insert into filtered_movies(movie_id) VALUES (r_movie.movie_id);
+	end loop;
 END $$;
 
+CALL filter_movies('1000-01-01', CURRENT_DATE, 'Crime', 0, 10, '');
+select * from filtered_movies;
 ------------------------------------------------------
 
 CREATE OR REPLACE PROCEDURE search_movie(dob DATE, movie_title varchar(100))
@@ -33,25 +45,15 @@ DECLARE
 begin
   if is_adult(dob) then 
 	for r_movie in select * from movie loop
-		cnt := 1;
-		movie_len := LENGTH(r_movie.title);
-		while cnt + len <= movie_len loop
-		  if LOWER(SUBSTR(r_movie.title,cnt,len)) = LOWER(movie_title) then
+		if contains(r_movie.title,movie_title) then 
 			raise notice '%', r_movie.title;
-		  end if;
-		  cnt := cnt + 1;
-		end loop;
+		end if;
 	end loop;
   else
 	for r_movie in select * from movie where (movie.rated = 'PG-13') loop
-		cnt := 1;
-		movie_len := LENGTH(r_movie.title);
-		while cnt + len <= movie_len loop
-		  if LOWER(SUBSTR(r_movie.title,cnt,len)) = LOWER(movie_title) then
+		if contains(r_movie.title,movie_title) then 
 			raise notice '%', r_movie.title;
-		  end if;
-		  cnt := cnt + 1;
-		end loop;
+		end if;
 	end loop;
   end if;
 end 
@@ -73,14 +75,9 @@ DECLARE
 begin
 	for r_celeb in select * from celebrity loop
 	  compare := CONCAT(r_celeb.firstname,' ', r_celeb.lastname);
-	  compLen := LENGTH(compare);
-	  cnt:=1;
-	  while cnt + len <= compLen loop
-		if LOWER(SUBSTR(compare,cnt,len)) = LOWER(celeb_name) then
-			raise notice '%',compare;
-		end if;
-		cnt:= cnt+1;
-	  end loop;
+	  if contains(compare,celeb_name) then 
+		raise notice '%', compare;
+	  end if;
 	end loop;
 end $$;
 
@@ -107,4 +104,54 @@ end $$;
 
 CALL celeb_movies('2','2000-11-11');
 
---------------------------------------------------------
+-----------------display movie reviews ----------------------------------
+CREATE OR REPLACE PROCEDURE display_movie_reviews(movie_ID varchar(10))
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	r_movie record;
+begin
+	for r_movie in select * from movie_review where movie_ID = movie_id loop
+	  -- display
+	end loop;
+end $$;
+
+-------------------display movie details-------------------------------------
+
+CREATE OR REPLACE PROCEDURE display_movie_details(movie_ID varchar(10))
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	r_movie record;
+begin
+	for r_movie in select * from movie where movie_ID = movie_id loop
+	  --display everything
+	  if CURRENT_DATE < r_movie.release_date then
+		EXECUTE PROCEDURE display_movie_review(movie_ID);
+	  end if; 
+	end loop;
+end $$;
+
+-----------------add to wishlist--------------
+
+CREATE OR REPLACE PROCEDURE add_to_wishlist(username varchar(20), movie_ID varchar(10))
+LANGUAGE plpgsql
+AS $$
+DECLARE
+begin
+	insert into wishlist (username, movie_ID);
+end $$;
+
+
+-----------------display wishlist ------------------------------------
+
+CREATE OR REPLACE PROCEDURE display_wishlist(userName varchar(20))
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	r_wishlist record;
+begin
+	for r_wishlist in select * from wishlist where wishlist.username = userName loop
+		-- display using r_wishlist.movie_id
+	end loop;
+end $$;
