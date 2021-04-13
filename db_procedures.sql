@@ -20,50 +20,91 @@ BEGIN
 	select * from filtered_movies;
 END $$;
 
---------------------------------------------------------------------
+------------------------------------------------------
 
-CREATE or REPLACE PROCEDURE search_movies(dob Date)
+CREATE OR REPLACE PROCEDURE search_movie(dob DATE, movie_title varchar(100))
 LANGUAGE plpgsql
 AS $$
 DECLARE
-BEGIN
-	if is_adult(dob) then 
-		select title from movies where movie.rated='U';
-	else 
-		select title from movies;
-	END if;
-END $$;
-
--------------------------------------------
-CREATE OR REPLACE PROCEDURE temp
-LANGUAGE plpgsql
-AS $$
-DECLARE
-	company production_company.company_name%type;
-begin
-	select company_name from production_company into company
-end;
-
-----------------------------------------------------
-
-CREATE OR REPLACE PROCEDURE search_movie(dob DATE, title varchar(100))
-LANGUAGE plpgsql
-AS $$
-DECLARE
+	r_movie record;
+	cnt int;
+	len int := LENGTH(movie_title);
+	movie_len int;
 begin
   if is_adult(dob) then 
-	select * from movies where movie where movie.title like '%title%';
-  else 
-	select * from movies where movie where (movie.title like '%title%' and movie.rated='U'); 
+	for r_movie in select * from movie loop
+		cnt := 1;
+		movie_len := LENGTH(r_movie.title);
+		while cnt + len <= movie_len loop
+		  if LOWER(SUBSTR(r_movie.title,cnt,len)) = LOWER(movie_title) then
+			raise notice '%', r_movie.title;
+		  end if;
+		  cnt := cnt + 1;
+		end loop;
+	end loop;
+  else
+	for r_movie in select * from movie where (movie.rated = 'PG-13') loop
+		cnt := 1;
+		movie_len := LENGTH(r_movie.title);
+		while cnt + len <= movie_len loop
+		  if LOWER(SUBSTR(r_movie.title,cnt,len)) = LOWER(movie_title) then
+			raise notice '%', r_movie.title;
+		  end if;
+		  cnt := cnt + 1;
+		end loop;
+	end loop;
   end if;
-end $$;
+end 
+$$;
+
+CALL search_movie('2000-11-11','Lord');
 
 ------------------------------------------------------------
 
-CREATE OR REPLACE PROCEDURE search_celeb(dob DATE, name varchar(100))
+CREATE OR REPLACE PROCEDURE search_celeb(celeb_name varchar(100))
 LANGUAGE plpgsql
 AS $$
 DECLARE
+	compare varchar(100);
+	r_celeb record;
+	len int := LENGTH(celeb_name);
+	compLen int;
+	cnt int;
 begin
-  
+	for r_celeb in select * from celebrity loop
+	  compare := CONCAT(r_celeb.firstname,' ', r_celeb.lastname);
+	  compLen := LENGTH(compare);
+	  cnt:=1;
+	  while cnt + len <= compLen loop
+		if LOWER(SUBSTR(compare,cnt,len)) = LOWER(celeb_name) then
+			raise notice '%',compare;
+		end if;
+		cnt:= cnt+1;
+	  end loop;
+	end loop;
 end $$;
+
+CALL search_celeb('Tim');
+
+---------------------------------------------------
+CREATE OR REPLACE PROCEDURE celeb_movies(celeb_id varchar(100), dob DATE)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	r_movie record;
+begin
+	for r_movie in select * from movie, movie_cast where 
+	(movie.movie_id = movie_cast.movie_id and movie_cast.person_id = celeb_id) loop
+	  if r_movie.rated = 'R' then 
+		if is_adult(dob) then 
+		  raise notice '%', r_movie.title;
+		end if;
+	  else 
+	  	raise notice '%', r_movie.title;
+	  end if;
+	end loop;
+end $$;
+
+CALL celeb_movies('2','2000-11-11');
+
+--------------------------------------------------------
