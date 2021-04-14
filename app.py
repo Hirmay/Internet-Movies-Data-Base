@@ -16,7 +16,7 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
-    password = '123ketki',
+    password = 'tirth177',
     host = 'localhost',
 )
 
