@@ -41,7 +41,7 @@ len int := LENGTH(child);
 parentLen int := LENGTH(parent);
 begin
 cnt:=1;
-while cnt + len <= parentLen loop
+while cnt + len <= parentLen+1 loop
 --raise notice '%,  %', SUBSTR(parent,cnt,len), child;
   if LOWER(SUBSTR(parent,cnt,len)) = LOWER(child) then
 return true;
