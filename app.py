@@ -10,13 +10,13 @@ from classes import *
 # from flask_migrate import Migrate
 
 app = Flask(__name__)
-
+app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 # IMPORTANT
 con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
-    password = 'tirth177',
+    password = '123ketki',
     host = 'localhost',
 )
 
@@ -101,9 +101,8 @@ def index():
     cur.execute("SELECT * FROM movie;")
     # row = cur.fetchone()
     rows = cur.fetchall()
-    # print(row)
-    # print(rows[1])
     return render_template("index.html", movies=rows, l=len(rows))
+
     # flash(e, "error")
     
 
@@ -162,15 +161,16 @@ def admin_delete():
     else:
         return render_template("admin_delete.html", form=search)    
     
-"""@app.route("/adminadd", methods=["GET", "POST"])
-@admin_only
-def admin_add():
-    return render_template("admin_add.html")
-
-@app.route("/admindelete", methods=["GET", "POST"])
-@admin_only
-def admin_add():
-    return render_template("admin_delete.html")"""
+@app.route("/movie", methods=["GET", "POST"])
+@login_required
+def movie():
+    movie_id = request.args.get('movie_id')
+    cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
+    rows = cur.fetchall()
+    if request.method == "POST":
+        return apology("Page not created", 404)
+    else:
+        return render_template("movie.html", movies=rows, l=len(rows))
 
 @app.route("/search", methods=["GET", "POST"])
 @login_required
