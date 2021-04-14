@@ -27,3 +27,28 @@ $$;
 
 CALL error_gen();
 
+------------------------------
+
+
+CREATE OR REPLACE FUNCTION contains(parent varchar(100), child varchar(100))
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+cnt int;
+len int := LENGTH(child);
+parentLen int := LENGTH(parent);
+begin
+cnt:=1;
+while cnt + len <= parentLen loop
+--raise notice '%,  %', SUBSTR(parent,cnt,len), child;
+  if LOWER(SUBSTR(parent,cnt,len)) = LOWER(child) then
+return true;
+  end if;
+  cnt := cnt + 1;
+end loop;
+--raise notice 'child: %', child;
+return false;
+end;
+$$;

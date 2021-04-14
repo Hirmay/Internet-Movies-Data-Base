@@ -183,7 +183,14 @@ def search():
         if search.data['search'] != '':
             cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
             datee = cur.fetchall()
-            cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
+            print(datee)
+            print(search_string)
+            query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
+            # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
+            # cur.callproc('search_movie',[datee[0], search_string])
+            print(query)
+            cur.execute(query)
+            print(results)
             results = cur.fetchall()
             flash(results)
             # Run query to see results
