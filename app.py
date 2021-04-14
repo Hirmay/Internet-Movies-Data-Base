@@ -176,18 +176,21 @@ def admin_add():
 @login_required
 def search():
     search = Search_M_W(request.form)
-    
+    username = session.get("username")
     if request.method == "POST":
         results = []
         search_string = search.data['search']
-        if search.data['search'] == '':
-            results = 'abc'
+        if search.data['search'] != '':
+            cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
+            datee = cur.fetchall()
+            cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
+            results = cur.fetchall()
+            flash(results)
             # Run query to see results
         if not results:
             flash('No results found!')
             return render_template('search.html', form=search)
         else:
-            # display results
             return render_template('searched.html', results=results, form=search) 
     else:
         return render_template("search.html", form=search)
