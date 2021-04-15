@@ -1,24 +1,47 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    search
+    Admin-Add
 {% endblock %}
 
 {% block main %}
 
-{% from "form_help.html" import render_field %}
-<form method="post">
-  <dl>
-    {{ render_field(form.select) }}
-    <p>
-    {{ render_field(form.search) }}
-  </p></dl>
-  <p><input type="submit" value="Search">
-</p></form>
-</doctype>
+    <form method="post">
+	<div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="movie_id" type="text" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Movie ID">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="title" type="text" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Title">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="production cost" type="text" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Production Cost">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="rating" type="int" pattern=".{1,}"   required title="Can not leave the field empty" placeholder="Rating">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="rated" type="text" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Rated">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="release_date" type="date" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Release Date">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="platform" type="text" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Platform">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="likes" type="int" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Likes">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="runtime" type="int" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Runtime">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="director" type="text" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Director">
+        </div>
+        <button class="btn btn-primary" type="submit">Add Movie</button>
+    </form>
 
     <div class="alert alert-primary" role="alert">
-        Add a Movie or Web-Show
+        Add the Movie to the DataBase.
     </div>
 
 {% endblock %}

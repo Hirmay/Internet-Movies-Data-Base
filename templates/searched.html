@@ -14,15 +14,8 @@
     </ul>
   {% endif %}
 {% endwith %}
-{% from "form_help.html" import render_field %}
-<form method="post">
-  <dl>
-    {{ render_field(form.select) }}
-    <p>
-    {{ render_field(form.search) }}
-  </p></dl>
-  <p><input type="submit" value="Search">
-</p></form>
+
+
 
 <h2>{{ option }}</h2>
 
@@ -39,10 +32,10 @@
   </thead>
   <tbody>
         <!-- {count = 1} -->
-        {% for m in range(1, l + 1)%}
+        {% for m in range(1, 2)%}
         <tr>
         <th scope="col">
-            {{ m }}
+            {{ results[0] }}
         </th>
         <th scope = "col">
             <a class="nav-link" href={{ url_for('movie', movie_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>

@@ -16,7 +16,7 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
-    password = 'tirth177',
+    password = '123ketki',
     host = 'localhost',
 )
 
@@ -121,25 +121,26 @@ def show_error():
 def admin():
     return render_template("admin.html")
 
-@app.route("/admin-add")
+@app.route("/admin-add", methods=["GET", "POST"])
 @admin_only
 def admin_add():
-    search = ADD_M_W(request.form)
     
     if request.method == "POST":
-        results = []
-        search_string = search.data['search']
-        if search.data['search'] == '':
-            results = 'abc'
-            # Run query to see results
-        if not results:
-            flash('No results found!')
-            return render_template('admin_add.html', form=search)
-        else:
-            # display results
-            return render_template('searched.html', results=results, form=search) 
+        movie_id = request.form.get("id")
+        title = request.form.get("title")
+        production_cost = request.form.get("production_cost")
+        rating = request.form.get("rating")
+        rated = request.form.get("rated")
+        released_date = request.form.get("released_date")
+        platform = request.form.get("platform")
+        likes = request.form.get("likes")
+        runtime = request.form.get("runtime")
+        director = request.form.get("director")
+        #cur.execute("INSERT INTO movie (movie_id, title, production_cost, rating, rated, released_date, platform, likes, runtime, director) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [movie_id, title, production_cost, rating, rated, released_date, platform, likes, runtime, director])
+        #con.commit()     
+        flash("Movie Added")
     else:
-        return render_template("admin_add.html", form=search)
+        return render_template("admin_add.html")
 
 @app.route("/admin-delete")
 @admin_only
@@ -166,9 +167,22 @@ def admin_delete():
 def movie():
     movie_id = request.args.get('movie_id')
     cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
-    rows = cur.fetchall()
+    rows = cur.fetchone()
+    #cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
+    #rows = cur.fetchone()
     if request.method == "POST":
-        return apology("Page not created", 404)
+            try:
+                like =  request.form["like"]
+                flash("Movie is liked")
+                # Insert into queries remaining
+            except:
+                try:
+                    watchlist = request.form["watchlist"]
+                    flash("Movie has been added to the watchlist")
+                except:
+                    review = request.form["review"]
+                    flash(review)
+            return render_template("movie.html", movies=rows, l=len(rows))
     else:
         return render_template("movie.html", movies=rows, l=len(rows))
 

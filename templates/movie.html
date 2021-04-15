@@ -6,14 +6,55 @@
 
 {% block main %}
 
-        {% for m in range(1, l + 1)%}
-		{{ movies }}
+<h1 style="background-color:DeepSkyBlue;">
+{{movies[1]}}
+</h1>
+
+<h3 style="background-color:snow;">
+Release Date: {{movies[5]}}
+</h3>
+
+<h3 style="background-color:snow;">
+Age Rating: {{movies[4]}}
+</h3>
+<h3 style="background-color:snow;">
+Score: {{movies[3]}}
+</h3>
+<h3 style="background-color:snow;">
+Production Cost (in Million $): {{movies[2]}}
+</h3>
+<h3 style="background-color:snow;">
+Runtime(in minutes): {{movies[8]}}
+</h3>
+<h3 style="background-color:snow;">
+No of likes: {{movies[7]}}
+</h3>
+
+<br>
 
 
+        <form method="post">
 
-        {% endfor %}
+                <input type="submit" value="Like the movie" name="like"/> 
+<br>
+<br>
+		<input type="submit" value="Add the movie to your watchlist" name="watchlist"/>
+        </form>
+<br>
+<br>
+<h1 style="background-color:gold;">
+Comments
+</h1>
+<br>
+        <form method="post">
 
+           <textarea rows = "5" cols = "60" name = "review"></textarea><br>
+         <input type = "submit" value = "submit your review" />
+        </form>
 {% endblock %}
+
+
+
 
 
 
