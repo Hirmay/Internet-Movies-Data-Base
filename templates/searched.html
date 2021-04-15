@@ -23,5 +23,38 @@
   </p></dl>
   <p><input type="submit" value="Search">
 </p></form>
+
+<h2>{{ option }}</h2>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+          <th scope="col">
+            No.
+          </th>
+          <th scope="col">
+            Name
+          </th>
+    </tr>
+  </thead>
+  <tbody>
+        <!-- {count = 1} -->
+        {% for m in range(1, l + 1)%}
+        <tr>
+        <th scope="col">
+            {{ m }}
+        </th>
+        <th scope = "col">
+            <a class="nav-link" href={{ url_for('movie', movie_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>
+        </th>
+        
+    {% endfor %}
+         </tr>
+
+  </tbody>
+
+</table>
+
+
 </doctype>
 {% endblock %}

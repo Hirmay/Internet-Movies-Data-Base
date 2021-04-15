@@ -176,29 +176,85 @@ def movie():
 @login_required
 def search():
     search = Search_M_W(request.form)
+    # print(search.data['select'])
+    option = search.data['select']
     username = session.get("username")
     if request.method == "POST":
         results = []
         search_string = search.data['search']
         if search.data['search'] != '':
-            cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
-            datee = cur.fetchall()
-            print(datee)
-            print(search_string)
-            query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
+            if option == 'Movie':
+                cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
+                datee = cur.fetchall()
+                print(datee)
+                print(search_string)
+                query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
             # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
             # cur.callproc('search_movie',[datee[0], search_string])
-            print(query)
-            cur.execute(query)
-            print(results)
-            results = cur.fetchall()
-            flash(results)
+            # print(query)
+                cur.execute(query)
+                results = cur.fetchall()
+                print(results)
+                if len(results) == 1:
+                    rtuple =  results[0][0] 
+                    query = "SELECT movie_id, title FROM movie where movie_id in ( '" + rtuple + "' ) ;"
+                else:
+                    rtuple = list()
+                    for r in results:
+                        rtuple.append(r[0])
+                    rtuple = tuple(rtuple)
+                    # print(rtuple)
+                    query = "SELECT movie_id, title FROM movie where movie_id in " + str(rtuple) + " ;"
+                # print(query)
+                cur.execute(query)
+                results = cur.fetchall()
+            elif option == 'Celebrity':
+                cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
+                datee = cur.fetchall()
+                print(datee)
+                print(search_string)
+                query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
+            # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
+            # cur.callproc('search_movie',[datee[0], search_string])
+            # print(query)
+                cur.execute(query)
+                # print(results)
+                results = cur.fetchall()
+            elif option == 'Director':
+                cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
+                datee = cur.fetchall()
+                print(datee)
+                print(search_string)
+                query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
+            # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
+            # cur.callproc('search_movie',[datee[0], search_string])
+            # print(query)
+                cur.execute(query)
+                # print(results)
+                results = cur.fetchall()
+            else:
+                cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
+                datee = cur.fetchall()
+                print(datee)
+                print(search_string)
+                query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
+            # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
+            # cur.callproc('search_movie',[datee[0], search_string])
+            # print(query)
+                cur.execute(query)
+                # print(results)
+                results = cur.fetchall()
+                
+                # cur.execute("SELECT movie_id, title FROM movie where movie_id in %s", results)
+            # flash(results)
             # Run query to see results
         if not results:
             flash('No results found!')
             return render_template('search.html', form=search)
         else:
-            return render_template('searched.html', results=results, form=search) 
+            l = len(results)
+            print(results)
+            return render_template('searched.html', results=results, form=search, option=option, l=l) 
     else:
         return render_template("search.html", form=search)
     
