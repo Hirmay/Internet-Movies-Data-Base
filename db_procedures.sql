@@ -108,7 +108,7 @@ begin
 		return query 
 		select movie.movie_id from movie where contains(title, movie_title)
 	else
-	return query 
+		return query 
 		select movie.movie_id from movie where contains(title, movie_title)
 		and rated = 'PG-13';
 	end if;
