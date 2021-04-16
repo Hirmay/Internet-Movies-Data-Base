@@ -16,7 +16,6 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
-    password = 'tirth177',
     host = 'localhost',
 )
 
@@ -116,10 +115,24 @@ def show_error():
     return render_template('show_error_temp.html')
 
 
+
+
 @app.route("/admin")
 @admin_only
 def admin():
     return render_template("admin.html")
+
+@app.route("/insights")
+@admin_only
+def insights():
+    query = "select get_genre_rating();" 
+    cur.execute(query)
+    results_genre = cur.fetchall()
+    query = "select get_ott_rating();" 
+    cur.execute(query)
+    results_ott = cur.fetchall()    
+    return render_template("insights.html", results_genre=results_genre, results_ott = results_ott)
+
 
 @app.route("/admin-add", methods=["GET", "POST"])
 @admin_only
