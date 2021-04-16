@@ -95,6 +95,17 @@ def apology(message, code=400):
     return render_template("apology.html", top=code, bottom=escape(message)), code
 
 
+
+@app.route("/watchlist")
+@login_required
+def watchlist():
+    cur = con.cursor()
+    cur.execute("SELECT * FROM movie;")
+    # row = cur.fetchone()
+    rows = cur.fetchall()
+    return render_template("watchlist.html", movies=rows, l=len(rows))
+
+
 @app.route("/")
 @login_required
 def index():
@@ -244,6 +255,8 @@ def delete_movie():
     else:
         return render_template("delete_movie.html", movies=rows, l=len(rows))
     
+
+
 @app.route("/movie", methods=["GET", "POST"])
 @login_required
 def movie():
@@ -252,6 +265,10 @@ def movie():
     movie_id = request.args.get('movie_id')
     cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
     rows = cur.fetchone()
+    cur.execute("SELECT celebrity.person_id, CONCAT(celebrity.firstname, ' ', celebrity.lastname), movie_cast.role FROM celebrity, movie_cast, movie Where movie.movie_id=%s and movie.movie_id = movie_cast.movie_id and celebrity.person_id = movie_cast.person_id;", [movie_id])
+    cast = cur.fetchall()
+    cast_len = len(cast)
+    print(cast)
     if request.method == "POST":
             try:
                 like =  request.form["like"]
@@ -291,9 +308,9 @@ def movie():
                         con.commit()
                         cur.close()
                         
-            return render_template("movie.html", movies=rows, l=len(rows))
+            return render_template("movie.html", movies=rows, cast_len=cast_len, cast=cast)
     else:
-        return render_template("movie.html", movies=rows, l=len(rows))
+        return render_template("movie.html", movies=rows, cast_len=cast_len, cast=cast)
 
 @app.route("/search", methods=["GET", "POST"])
 @login_required

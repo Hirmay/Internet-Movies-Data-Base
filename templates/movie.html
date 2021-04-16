@@ -30,6 +30,55 @@ Runtime(in minutes): {{movies[8]}}
 <h3 style="background-color:snow;">
 No of likes: {{movies[7]}}
 </h3>
+<br>
+<br>
+<h3 style="background-color:rgb(26, 25, 25), color:azure;">
+        Cast
+</h3>
+<table class="table">
+<thead class="table-bordered">
+        <tr>
+        <th scope="col">
+                No.
+        </th>
+        <th scope="col">
+                Name
+        </th>
+        <th scope="col">
+                Role
+        </th>
+        </tr>
+</thead>
+<tbody>
+        <!-- {count = 1} -->
+        {% for m in range(1, cast_len + 1)%}
+        <tr>
+        <th scope="col">
+                {{ m }}
+        </th>
+        {% for i in [1,2] %},
+                {% if movies[m-1][i]==None %}
+                {% continue %}
+                {% endif %}
+                {% if i==1 %}
+                                <th scope = "col">
+                                <a class="nav-link" href={{ url_for('celebrity', person_id=cast[m-1][0]) }}>{{ cast[m-1][i]  }}</a></li>
+                                </th>
+                
+
+                {% else %}
+                                <th scope = "col">
+                                {{ cast[m-1][i] }}
+                                </th>
+                {% endif %}
+        {% endfor %}
+        
+        {% endfor %}
+        </tr>
+
+</tbody>
+
+</table>
 
 <br>
 
