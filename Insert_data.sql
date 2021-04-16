@@ -45,3 +45,13 @@ insert into abusive_words(words) values('fucking');
 insert into abusive_words(words) values('motherfucker');
 insert into abusive_words(words) values('fucker');
 insert into abusive_words(words) values('ass');
+insert into abusive_words(words) values('shit');
+
+insert into ott_platform values ('Amazon Prime Video');
+insert into ott_platform values ('Hotstar');
+insert into ott_platform values ('Hulu');
+
+UPDATE movie SET platform = 'Amazon Prime Video' WHERE movie_id in ('1','2','3','4','11');
+UPDATE movie SET platform = 'Netflix' WHERE movie_id in ('5','6','7','12');
+UPDATE movie SET platform = 'Hulu' WHERE movie_id in ('8','10');
+UPDATE movie SET platform = 'Hotstar' WHERE movie_id = '9';
