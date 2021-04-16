@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Movie
+{% endblock %}
+
+{% block main %}
+
+<h1 style="background-color:DeepSkyBlue;">
+{{movies[1]}}
+</h1>
+
+
+<h3 style="background-color:snow;">
+Release Date: {{movies[5]}}
+</h3>
+
+<h3 style="background-color:snow;">
+Age Rating: {{movies[4]}}
+</h3>
+<h3 style="background-color:snow;">
+Score: {{movies[3]}}
+</h3>
+<h3 style="background-color:snow;">
+Production Cost (in Million $): {{movies[2]}}
+</h3>
+<h3 style="background-color:snow;">
+Runtime(in minutes): {{movies[8]}}
+</h3>
+<h3 style="background-color:snow;">
+No of likes: {{movies[7]}}
+</h3>
+
+<br>
+
+
+        <form method="post">
+
+                <input type="submit" value="Delete the movie" name="deletion"/> 
+
+        </form>
+
+{% endblock %}
+
+
+
+
+
+
+
