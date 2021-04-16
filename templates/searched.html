@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    quote
+    Searched
 {% endblock %}
 
 {% block main %}
@@ -38,7 +38,11 @@
               {{ m }}
           </th>
           <th scope = "col">
-              <a class="nav-link" href={{ url_for('movie', movie_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>
+	      {% if session.username == "admin" %}
+              		<a class="nav-link" href={{ url_for('delete_movie', movie_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>	
+	      {% else %}
+			<a class="nav-link" href={{ url_for('movie', movie_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>
+	      {% endif %}		
           </th>
             
           {% endfor %}
@@ -68,8 +72,12 @@
               {{ m }}
           </th>
           <th scope = "col">
-              <a class="nav-link" href={{ url_for('celebrity', person_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>
-          </th>
+	      {% if session.username == "admin" %}
+              		<a class="nav-link" href={{ url_for('delete-celebrity', person_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>	
+	      {% else %}		
+              		<a class="nav-link" href={{ url_for('celebrity', person_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>
+          	{% endif %}
+	  </th>
             
           {% endfor %}
           </tr>

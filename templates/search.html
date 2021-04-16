@@ -6,6 +6,7 @@
 
 {% block main %}
 
+
 {% from "form_help.html" import render_field %}
 <form method="post">
   <dl>
@@ -17,8 +18,15 @@
 </p></form>
 </doctype>
 
-    <div class="alert alert-primary" role="alert">
-        Know your celebs, movies, web-series and directors.
-    </div>
-
+{% if session.username %}
+	{% if session.username == "admin" %}
+		 <div class="alert alert-primary" role="alert">
+        		Delete a Movie or Celebrity
+    		 </div>	
+	{% else %}			
+    		<div class="alert alert-primary" role="alert">
+        		Know your celebs, movies, web-series and directors.
+ 		</div>
+	{% endif %}
+{% endif %}
 {% endblock %}

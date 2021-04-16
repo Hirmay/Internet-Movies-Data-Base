@@ -17,6 +17,7 @@ con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
     password = 'tirth177',
+    password = '123ketki',
     host = 'localhost',
 )
 
@@ -124,9 +125,8 @@ def admin():
 @app.route("/admin-add", methods=["GET", "POST"])
 @admin_only
 def admin_add():
-    
     if request.method == "POST":
-        movie_id = request.form.get("id")
+        movie_id = request.form.get("movie_id")
         title = request.form.get("title")
         production_cost = request.form.get("production_cost")
         rating = request.form.get("rating")
@@ -145,28 +145,52 @@ def admin_add():
     else:
         return render_template("admin_add.html")
 
-@app.route("/admin-delete")
-@admin_only
-def admin_delete():
-    search = DELETE_M_W(request.form)
-    
+
+@app.route("/delete-celebrity", methods=["GET", "POST"])
+@login_required
+def delete_celebrity():
+    person_id = cur.execute("SELECT * FROM celebrity WHERE person_id=%s", [person_id_id])
+    rows = cur.fetchone()
+    print(rows)
     if request.method == "POST":
-        results = []
-        search_string = search.data['search']
-        if search.data['search'] == '':
-            results = 'abc'
-            # Run query to see results
-        if not results:
-            flash('No results found!')
-            return render_template('admin_delete.html', form=search)
-        else:
-            # display results
-            return render_template('delete_searched.html', results=results, form=search) 
+        person_id = request.args.get('person_id')
+        cur.execute("DELETE FROM celebrity WHERE person_id=%s", [person_id])
+        con.commit()
+        flash("Celebrity has been deleted")
+        return render_template("admin.html", movies=rows, l=len(rows))
     else:
-        return render_template("admin_delete.html", form=search) 
-
-
-@app.route("/celebrity", methods=["GET", "POST"])
+        movie_id = request.args.get('person_id')
+        cur.execute("SELECT * FROM celebrity WHERE person_id=%s", [person_id])
+        rows = cur.fetchone()
+        print(rows)
+        #cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
+        #rows = cur.fetchone()
+        username = session.get("username")
+        cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
+        datee = cur.fetchall()
+        query = "SELECT display_celeb_movies( '" + rows[0] + "' , '"+ str(datee[0][0]) + "' );" 
+    # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
+    # cur.callproc('search_movie',[datee[0], search_string])
+    # print(query)
+        cur.execute(query)
+        results = cur.fetchall()
+        print(results)
+        if len(results) == 1:
+            rtuple =  results[0][0] 
+            query = "SELECT movie_id, title FROM movie where movie_id in ( '" + rtuple + "' ) ;"
+        else:
+            rtuple = list()
+            for r in results:
+                rtuple.append(r[0])
+            rtuple = tuple(rtuple)
+            # print(rtuple)
+            query = "SELECT movie_id, title FROM movie where movie_id in " + str(rtuple) + " ;"
+        # print(query)
+        cur.execute(query)
+        results = cur.fetchall()
+        return render_template("celebrity.html", celebrity=rows, l=len(results), results=results)
+    
+@app.route("/celebrity")
 @login_required
 def celebrity():
     movie_id = request.args.get('person_id')
@@ -202,7 +226,21 @@ def celebrity():
 
 
 
-
+@app.route("/delete-movie", methods=["GET", "POST"])
+@login_required
+def delete_movie():
+    movie_id = request.args.get('movie_id')
+    cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
+    rows = cur.fetchone()
+    #cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
+    #rows = cur.fetchone()
+    if request.method == "POST":
+            cur.execute("DELETE FROM movie WHERE movie_id=%s", [movie_id])
+            con.commit()
+            flash("Movie has been deleted")
+            return render_template("admin.html", movies=rows, l=len(rows))
+    else:
+        return render_template("delete_movie.html", movies=rows, l=len(rows))
     
 @app.route("/movie", methods=["GET", "POST"])
 @login_required
@@ -212,8 +250,6 @@ def movie():
     movie_id = request.args.get('movie_id')
     cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
     rows = cur.fetchone()
-    #cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
-    #rows = cur.fetchone()
     if request.method == "POST":
             try:
                 like =  request.form["like"]
@@ -281,19 +317,23 @@ def search():
                 cur.execute(query)
                 results = cur.fetchall()
                 print(results)
-                if len(results) == 1:
-                    rtuple =  results[0][0] 
-                    query = "SELECT movie_id, title FROM movie where movie_id in ( '" + rtuple + "' ) ;"
+                if len(results) > 0:
+                    if len(results) == 1:
+                        rtuple =  results[0][0] 
+                        query = "SELECT movie_id, title FROM movie where movie_id in ( '" + rtuple + "' ) ;"
+                    else:
+                        rtuple = list()
+                        for r in results:
+                            rtuple.append(r[0])
+                        rtuple = tuple(rtuple)
+                        # print(rtuple)
+                        query = "SELECT movie_id, title FROM movie where movie_id in " + str(rtuple) + " ;"
+                    # print(query)
+                    cur.execute(query)
+                    results = cur.fetchall()
                 else:
-                    rtuple = list()
-                    for r in results:
-                        rtuple.append(r[0])
-                    rtuple = tuple(rtuple)
-                    # print(rtuple)
-                    query = "SELECT movie_id, title FROM movie where movie_id in " + str(rtuple) + " ;"
-                # print(query)
-                cur.execute(query)
-                results = cur.fetchall()
+                    flash('No results found!')
+                    return render_template('search.html', form=search)   
             elif option == 'Celebrity':
                 print(search_string)
                 query = "SELECT search_celebs( '" + search_string + "' );" 
@@ -303,20 +343,23 @@ def search():
                 cur.execute(query)
                 # print(results)
                 results = cur.fetchall()
-                if len(results) == 1:
-                    rtuple =  results[0][0] 
-                    query = "SELECT person_id, firstname, lastname FROM celebrity where person_id in ( '" + rtuple + "' ) ;"
+                if len(results) > 0:
+                    if len(results) == 1:
+                        rtuple =  results[0][0] 
+                        query = "SELECT person_id, firstname, lastname FROM celebrity where person_id in ( '" + rtuple + "' ) ;"
+                    else:
+                        rtuple = list()
+                        for r in results:
+                            rtuple.append(r[0])
+                        rtuple = tuple(rtuple)
+                        # print(rtuple)
+                        query = "SELECT person_id, CONCAT(firstname, ' ', lastname) FROM celebrity where person_id in " + str(rtuple) + " ;"
+                    # print(query)
+                    cur.execute(query)
+                    results = cur.fetchall()
                 else:
-                    rtuple = list()
-                    for r in results:
-                        rtuple.append(r[0])
-                    rtuple = tuple(rtuple)
-                    # print(rtuple)
-                    query = "SELECT person_id, CONCAT(firstname, ' ', lastname) FROM celebrity where person_id in " + str(rtuple) + " ;"
-                # print(query)
-                cur.execute(query)
-                results = cur.fetchall()
-                print(results)
+                    flash('No results found!')
+                    return render_template('search.html', form=search)       
             else:
                 cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
                 datee = cur.fetchall()
