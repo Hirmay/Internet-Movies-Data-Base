@@ -46,29 +46,4 @@ main img
     max-width: 100%;
 }
 
-h1 {
-	font-size: 8vw;
-	font-weight: 900;
-	background-color: #000;
-	color: #fff;
-	display: block;
-	padding: .5em;
-}
 
-
-h2 {
-	font-size: 8vw;
-	font-weight: 900;
-	background-color: #000;
-	color: #fff;
-	display: block;
-	padding: .5em;
-}
-h3 {
-	font-size: 8vw;
-	font-weight: 900;
-	background-color: #000;
-	color: #fff;
-	display: block;
-	padding: .5em;
-}
