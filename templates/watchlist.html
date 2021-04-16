@@ -16,7 +16,7 @@
                 Name
               </th>
               <th scope="col">
-                Rating
+                Remove from wishlist
               </th>
         </tr>
       </thead>
@@ -27,7 +27,7 @@
             <th scope="col">
                 {{ m }}
             </th>
-           {% for i in [1,3] %}
+           {% for i in [1] %}
                {% if movies[m-1][i]==None %}
                    {% continue %}
                {% endif %}
@@ -37,9 +37,11 @@
                		</th>
 
 	       {% else %}
-               		<th scope = "col">
-                    		{{ movies[m-1][i] }}
-               		</th>
+               		<td>
+                    		<form method="post">
+                          <input type="submit" value="Removed from wishlist" name="removewishlist"/> 
+                        </form>
+                      </td>
                {% endif %}
             {% endfor %}
             

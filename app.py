@@ -100,10 +100,27 @@ def apology(message, code=400):
 @login_required
 def watchlist():
     cur = con.cursor()
-    cur.execute("SELECT * FROM movie;")
+    username = session.get("username")
+    cur.execute("SELECT display_wishlist(%s);", [username])
     # row = cur.fetchone()
     rows = cur.fetchall()
-    return render_template("watchlist.html", movies=rows, l=len(rows))
+    print(rows)
+    if len(rows) > 0:
+        if len(rows) == 1:
+            rtuple =  rows[0][0] 
+            query = "SELECT movie_id, title FROM movie where movie_id in ( '" + rtuple + "' ) ;"
+        else:
+            rtuple = list()
+            for r in rows:
+                rtuple.append(r[0])
+            rtuple = tuple(rtuple)
+            # print(rtuple)
+            query = "SELECT movie_id, title FROM movie where movie_id in " + str(rtuple) + " ;"
+        # print(query)
+        cur.execute(query)
+        results = cur.fetchall()
+        print(results)
+    return render_template("watchlist.html", movies=results, l=len(results))
 
 
 @app.route("/")
@@ -344,6 +361,8 @@ def movie():
                             query = "UPDATE db_user set warning=" + str(warns) + " where username='" + username + "' ;"
                             print(query)
                             cur.execute(query)
+                            if warns == 3:
+                                cur.execute("insert into blocked_user values(email) delete from db_user where username=...")
                             con.commit()
                             cur.close()
             return render_template("movie.html", movies=rows, cast_len=cast_len, reviews_len=reviews_len, reviews=r, cast=cast)

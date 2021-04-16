@@ -144,7 +144,7 @@ select display_movie_reviews('2');
 
 
 -------------------display movie details-------------------------------------
-
+-- Not used but we can demonstrate
 create or replace function display_movies (
   mov_id varchar(100)
 ) 
@@ -175,6 +175,7 @@ select display_movies('12');
 
 
 -----------------add to wishlist--------------
+-- Done
 
 CREATE OR REPLACE PROCEDURE add_to_wishlist(
 		username varchar(20), movie_ID varchar(10)
@@ -198,7 +199,7 @@ begin
 end $$;
 
 -----------------display wishlist ------------------------------------
-
+-- Done
 create or replace function display_wishlist (
   		usern varchar(100)
 	) 
@@ -311,7 +312,7 @@ end;
 $$;
 
 --------add upvote to review or remove upvote if already upvoted ----------------
-
+-- Done
 create or replace procedure add_upvote(rev_id varchar(10), usernam varchar(20))
 language plpgsql
 as $$ 
