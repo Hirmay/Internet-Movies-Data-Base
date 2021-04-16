@@ -249,8 +249,4 @@ INSERT INTO movie_review(review_id, posted_on, content, up_votes, movie_id, user
 VALUES ('mr0001','2000-01-01','this fuck movie is good', 0, '1','ro');
 
 INSERT INTO movie_review(review_id, posted_on, content, up_votes, movie_id, username)
-<<<<<<< HEAD
 VALUES ('mr0008','2000-01-01','this movie is sooo good', 0, '2','ro');
-=======
-VALUES ('mr0008','2000-01-01','this movie is sooo good', 0, '2','ro');
->>>>>>> 0671031d5389ecd149f31c1170f05680e88ef10a
