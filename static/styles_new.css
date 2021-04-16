@@ -4,6 +4,10 @@ nav .navbar-brand
     font-size: xx-large;
 }
 
+body {
+  background-color: azure;
+}
+
 /* colors for brand */
 nav .navbar-brand .blue
 {
@@ -20,6 +24,11 @@ nav .navbar-brand .white
 nav .navbar-brand .green
 {
     color: #2e944b;
+}
+
+nav .navbar-brand .gold
+{
+    color: #FFD700;
 }
 
 main .form-control
@@ -45,5 +54,3 @@ main img
     /* constrain images on small screens */
     max-width: 100%;
 }
-
-
