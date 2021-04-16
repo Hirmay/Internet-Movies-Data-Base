@@ -102,14 +102,15 @@ Comments
         <p>{{ review[2] }}</p>
         <p>Upvote = {{ review[3] }}</p>
         <form method="post">
-                <input type="submit" value="Upvote the review" name="upvote"/> 
+                <input type="submit" value="upvote" name="upvote"/> 
+                <input type="hidden" name="review_id" value= "{{ review[0] }}" />
         </form>
 {% endfor %}
 
 <br>
         <form method="post">
 
-           <textarea rows = "5" cols = "60" name = "review"></textarea><br>
+           <textarea rows = "5" cols = "60" name = "review_given"></textarea><br>
          <input type = "submit" value = "submit your review" />
         </form>
 

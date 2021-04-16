@@ -183,7 +183,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 begin
-	insert into wishlist (username, movie_ID);
+	insert into wishlist VALUES (username, movie_ID);
 end $$;
 
 ---------------delete from wishlist---------------------
@@ -288,6 +288,7 @@ $$;
 select get_ott_rating();
 
 -----------------add like to movie or remove like if the movie is already liked----------------
+-- Done
 create or replace procedure add_like(mov_id varchar(10), usernam varchar(20)) 
 language plpgsql 
 as $$
@@ -310,6 +311,7 @@ end;
 $$;
 
 --------add upvote to review or remove upvote if already upvoted ----------------
+
 create or replace procedure add_upvote(rev_id varchar(10), usernam varchar(20))
 language plpgsql
 as $$ 

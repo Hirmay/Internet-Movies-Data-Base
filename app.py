@@ -17,6 +17,7 @@ con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
     host = 'localhost',
+    password='tirth177'
 )
 
 # Cursor Testing
@@ -216,6 +217,7 @@ def delete_celebrity():
         else:
             return render_template("celebrity.html", celebrity=rows, l=0, results=None) 
         
+
 @app.route("/celebrity")
 @login_required
 def celebrity():
@@ -282,7 +284,7 @@ def movie():
     cast = cur.fetchall()
     cast_len = len(cast)
     # print(cast)
-    cur.execute("SELECT display_movie_reviews(%s);", [movie_id]);
+    cur.execute("SELECT display_movie_reviews(%s);", [movie_id])
     reviews = cur.fetchall()
     reviews_len = len(reviews)
     # print(reviews[0][0][2], reviews[0][0][3])
@@ -299,16 +301,24 @@ def movie():
                 like =  request.form["like"]
                 flash("Movie is liked")
                 # Insert into queries remaining
+                cur.execute("CALL add_like(%s, %s);", [movie_id, username])
+                con.commit()
             except:
                 try:
                     watchlist = request.form["watchlist"]
                     flash("Movie has been added to the watchlist")
+                    cur.execute("CALL add_to_wishlist(%s, %s);", [username, movie_id])
+                    con.commit()
                 except:
                     try:
                         upvote = request.form["upvote"]
+                        review_id = request.form["review_id"]
+                        print(review_id)
                         flash("Upvoted the Review")
+                        cur.execute("CALL add_upvote(%s, %s);", [review_id, username])
+                        con.commit()
                     except:
-                        review = request.form["review"]
+                        review = request.form["review_given"]
                         # flash(review)
                         cur.execute("SELECT warning from db_user where username=%s", [username])
                         temp = cur.fetchone()
@@ -339,6 +349,7 @@ def movie():
             return render_template("movie.html", movies=rows, cast_len=cast_len, reviews_len=reviews_len, reviews=r, cast=cast)
     else:
         return render_template("movie.html", movies=rows, cast_len=cast_len, reviews_len=reviews_len, reviews=r, cast=cast)
+
 
 @app.route("/search", methods=["GET", "POST"])
 @login_required
