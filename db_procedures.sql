@@ -98,6 +98,7 @@ end;
 $$;
 
 ------------------displays the movie a celeb has worked on---------------------------------
+-- Frontend done
 
 create or replace function display_celeb_movies (
   celeb_id varchar(100),
@@ -117,6 +118,7 @@ $$;
 select display_celeb_movies('14','2000-11-11');
 
 -----------------display movie reviews ----------------------------------
+-- Fontend done
 
 create or replace function display_movie_reviews (
   mov_ID varchar(10)
@@ -214,6 +216,7 @@ $$;
 select display_wishlist('ro');
 
 ----------------------get genre rating for graph -----------------------------
+-- Hirmay
 create or replace function get_genre_rating () 
 	returns table (
 		gen varchar(100),
@@ -250,7 +253,7 @@ select get_genre_rating();
 
 
 ------------get ott rating and total movies on that platform for graph---------------------
-
+-- Hirmay
 create or replace function get_ott_rating () 
 	returns table (
 		platform varchar(100),

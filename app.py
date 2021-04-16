@@ -268,7 +268,19 @@ def movie():
     cur.execute("SELECT celebrity.person_id, CONCAT(celebrity.firstname, ' ', celebrity.lastname), movie_cast.role FROM celebrity, movie_cast, movie Where movie.movie_id=%s and movie.movie_id = movie_cast.movie_id and celebrity.person_id = movie_cast.person_id;", [movie_id])
     cast = cur.fetchall()
     cast_len = len(cast)
-    print(cast)
+    # print(cast)
+    cur.execute("SELECT display_movie_reviews(%s);", [movie_id]);
+    reviews = cur.fetchall()
+    reviews_len = len(reviews)
+    # print(reviews[0][0][2], reviews[0][0][3])
+    print(reviews)
+    r = list()
+    # temp = list()
+    for review in reviews:
+        review = review[0][1:len(review[0])-1]
+        temp = list(map(str, review.split(',')))
+        r.append(temp)
+    # print(r)
     if request.method == "POST":
             try:
                 like =  request.form["like"]
@@ -279,38 +291,41 @@ def movie():
                     watchlist = request.form["watchlist"]
                     flash("Movie has been added to the watchlist")
                 except:
-                    review = request.form["review"]
-                    # flash(review)
-                    cur.execute("SELECT warning from db_user where username=%s", [username])
-                    temp = cur.fetchone()
-                    print(temp)
-                    if temp[0]==None:
-                        warns = 0
-                    else:
-                        warns = temp[0]
-                    warns += 1
                     try:
-                        cur.execute("SELECT count(*) from movie_review;")
-                        review_id = cur.fetchone()[0] + 1
-                        # print(review_id)
-                        cur.execute("INSERT INTO movie_review(review_id, posted_on, content, up_votes, movie_id, username) VALUES (%s, current_date, %s, 0, %s, %s);", [review_id, review, movie_id, username])
-                        con.commit()
-                    except Exception as e:
-                        # flash(e)
-                        con.commit()
-                        # cur.open()
-                        # cur = con.cursor()
-                        flash("Use of abusive language detected. You are given a warining. If your warnings exceed 3 then your account will be banned!")
-                        username = session.get("username")
-                        query = "UPDATE db_user set warning=" + str(warns) + " where username='" + username + "' ;"
-                        print(query)
-                        cur.execute(query)
-                        con.commit()
-                        cur.close()
-                        
-            return render_template("movie.html", movies=rows, cast_len=cast_len, cast=cast)
+                        upvote = request.form["upvote"]
+                        flash("Upvoted the Review")
+                    except:
+                        review = request.form["review"]
+                        # flash(review)
+                        cur.execute("SELECT warning from db_user where username=%s", [username])
+                        temp = cur.fetchone()
+                        print(temp)
+                        if temp[0]==None:
+                            warns = 0
+                        else:
+                            warns = temp[0]
+                        warns += 1
+                        try:
+                            cur.execute("SELECT count(*) from movie_review;")
+                            review_id = cur.fetchone()[0] + 1
+                            # print(review_id)
+                            cur.execute("INSERT INTO movie_review(review_id, posted_on, content, up_votes, movie_id, username) VALUES (%s, current_date, %s, 0, %s, %s);", [review_id, review, movie_id, username])
+                            con.commit()
+                        except Exception as e:
+                            # flash(e)
+                            con.commit()
+                            # cur.open()
+                            # cur = con.cursor()
+                            flash("Use of abusive language detected. You are given a warining. If your warnings exceed 3 then your account will be banned!")
+                            username = session.get("username")
+                            query = "UPDATE db_user set warning=" + str(warns) + " where username='" + username + "' ;"
+                            print(query)
+                            cur.execute(query)
+                            con.commit()
+                            cur.close()
+            return render_template("movie.html", movies=rows, cast_len=cast_len, reviews_len=reviews_len, reviews=r, cast=cast)
     else:
-        return render_template("movie.html", movies=rows, cast_len=cast_len, cast=cast)
+        return render_template("movie.html", movies=rows, cast_len=cast_len, reviews_len=reviews_len, reviews=r, cast=cast)
 
 @app.route("/search", methods=["GET", "POST"])
 @login_required

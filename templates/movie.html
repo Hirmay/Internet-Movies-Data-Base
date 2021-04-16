@@ -95,6 +95,17 @@ No of likes: {{movies[7]}}
 <h1 style="background-color:gold;">
 Comments
 </h1>
+
+{% for review in reviews %}
+        <!-- <h3>{{ review }}</h3> -->
+        <h3>{{ review[4] }}</h3>
+        <p>{{ review[2] }}</p>
+        <p>Upvote = {{ review[3] }}</p>
+        <form method="post">
+                <input type="submit" value="Upvote the review" name="upvote"/> 
+        </form>
+{% endfor %}
+
 <br>
         <form method="post">
 
