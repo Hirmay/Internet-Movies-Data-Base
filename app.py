@@ -195,7 +195,7 @@ def celebrity():
     # print(query)
     cur.execute(query)
     results = cur.fetchall()
-    return render_template("celebrity.html", celebrity=rows, l=len(results), movies=results)
+    return render_template("celebrity.html", celebrity=rows, l=len(results), results=results)
 
 
 
