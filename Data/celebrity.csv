@@ -1,31 +1,31 @@
-﻿person_id,firstname,lastname,birthyear,age,gender
-1,Tim,Robbins,1958,,Male
-2,Morgan,Freeman,1937,,Male
-3,Marlon,Brando,1924,,Male
-4,James,Cann,1940,,Male
-5,Diane,Keaton,1946,,Female
-6,Christian ,Bale,1974,,Male
-7,Heath ,Ledger,1979,,Male
-8,Maggie ,Gyllenhaal,1977,,Female
-9,Robert,Duvall,1931,,Male
-10,Caroline,Goodall,1959,,Female
-11,Liam,Neeson,1952,,Male
-12,Noel,Appleby,,,Male
-13,Ali,Astin,1996,,Female
-14,Leonardo,DiCaprio,1974,,Male
-15,Elliot,Page,1987,,Female
-16,Matthew,McConaughey,1969,,Male
-17,Mackenzie,Foy,2000,,Female
-18,Amir,Khan,1965,,Male
-19,Fatima Sana,Shaikh,1992,,Female
-20,Sanya ,Malhotra,,,Feamle
-21,Cate,Blanchett,1969,,Female
-22,Sean ,Astin,1971,,Male
-23,Brad,Pitt,1963,,Male
-101,Frank,Darabont,,,Male
-102,Francis ,Ford Coppola,,,Male
-103,Christopher,Nolan,,,Male
-104,Steven ,Spielberg,,,Male
-105,Peter ,Jackson,,,Male
-106,David ,Fincher,,,Male
-107,Nitesh ,Tiwari,,,Male
+person_id	firstname	lastname	birthyear	age	gender
+1	Tim	Robbins	1958		Male
+2	Morgan	Freeman	1937		Male
+3	Marlon	Brando	1924		Male
+4	James	Cann	1940		Male
+5	Diane	Keaton	1946		Female
+6	Christian 	Bale	1974		Male
+7	Heath 	Ledger	1979		Male
+8	Maggie 	Gyllenhaal	1977		Female
+9	Robert	Duvall	1931		Male
+10	Caroline	Goodall	1959		Female
+11	Liam	Neeson	1952		Male
+12	Noel	Appleby			Male
+13	Ali	Astin	1996		Female
+14	Leonardo	DiCaprio	1974		Male
+15	Elliot	Page	1987		Female
+16	Matthew	McConaughey	1969		Male
+17	Mackenzie	Foy	2000		Female
+18	Amir	Khan	1965		Male
+19	Fatima Sana	Shaikh	1992		Female
+20	Sanya 	Malhotra			Female
+21	Cate	Blanchett	1969		Female
+22	Sean 	Astin	1971		Male
+23	Brad	Pitt	1963		Male
+101	Frank	Darabont			Male
+102	Francis 	Ford Coppola			Male
+103	Christopher	Nolan			Male
+104	Steven 	Spielberg			Male
+105	Peter 	Jackson			Male
+106	David 	Fincher			Male
+107	Nitesh 	Tiwari			Male
