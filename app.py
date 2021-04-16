@@ -17,7 +17,6 @@ con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
     password = 'tirth177',
-    password = '123ketki',
     host = 'localhost',
 )
 
