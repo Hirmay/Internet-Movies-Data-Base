@@ -23,44 +23,44 @@ delete from movie where movie_id = '1';
 
 ------------------trigger to delete shows------------------ 
 
-CREATE OR REPLACE FUNCTION delete_shows() RETURNS TRIGGER 
-LANGUAGE plpgsql
-as $$
-DECLARE
-begin
-  delete from show_genre where show_genre.show_id = OLD.show_id;
-  delete from show_produced_by where show_produced_by.show_id = OLD.show_id;
-  delete from show_cast where show_cast.show_id = OLD.show_id;
-  delete from show_review where show_review.show_id = OLD.show_id;
-  update ott_platform set total = total -1 where platform_name = OLD.platform;
-  RETURN OLD;
-end;
-$$;
+-- CREATE OR REPLACE FUNCTION delete_shows() RETURNS TRIGGER 
+-- LANGUAGE plpgsql
+-- as $$
+-- DECLARE
+-- begin
+--   delete from show_genre where show_genre.show_id = OLD.show_id;
+--   delete from show_produced_by where show_produced_by.show_id = OLD.show_id;
+--   delete from show_cast where show_cast.show_id = OLD.show_id;
+--   delete from show_review where show_review.show_id = OLD.show_id;
+--   update ott_platform set total = total -1 where platform_name = OLD.platform;
+--   RETURN OLD;
+-- end;
+-- $$;
 
-CREATE TRIGGER show_delete 
-BEFORE DELETE ON tv_show
-FOR EACH ROW 
-EXECUTE PROCEDURE delete_shows();
+-- CREATE TRIGGER show_delete
+-- BEFORE DELETE ON tv_show
+-- FOR EACH ROW
+-- EXECUTE PROCEDURE delete_shows();
 
-delete from show where show_id = '1';
+-- delete from show where show_id = '1';
 
 ---------------------------trigger to delete celebs-----------------------------------
 
-CREATE OR REPLACE FUNCTION delete_celeb() RETURNS TRIGGER 
+CREATE OR REPLACE FUNCTION delete_celeb() RETURNS TRIGGER
 LANGUAGE plpgsql
 as $$
 DECLARE
 begin
   delete from movie_cast where movie_cast.person_id = OLD.person_id;
-  delete from show_cast where show_cast.person_id = OLD.person_id;
+  --delete from show_cast where show_cast.person_id = OLD.person_id;
   update movie set director = NULL where director = OLD.person_id;
   RETURN OLD;
 end;
 $$;
 
-CREATE TRIGGER celeb_delete 
+CREATE TRIGGER celeb_delete
 BEFORE DELETE ON celebrity
-FOR EACH ROW 
+FOR EACH ROW
 EXECUTE PROCEDURE delete_celeb();
 
 delete from celebrity where person_id = '20';
@@ -195,7 +195,7 @@ as $$
 DECLARE
 begin
   delete from movie_review where movie_review.username = OLD.username; 
-  delete from show_review where show_review.username = OLD.username; 
+  --delete from show_review where show_review.username = OLD.username; 
 --   delete from movie_cast where movie_cast.person_id = OLD.person_id;
 --   delete from show_cast where show_cast.person_id = OLD.person_id;
 --   update movie set director = NULL where director = OLD.person_id;
@@ -207,11 +207,40 @@ CREATE TRIGGER user_delete
 BEFORE DELETE ON db_user
 FOR EACH ROW 
 EXECUTE PROCEDURE delete_user();
+
+
+---------------------------trigger to delete user -----------------------------------
+
+CREATE OR REPLACE FUNCTION check_if_user_blocked() RETURNS TRIGGER 
+LANGUAGE plpgsql
+as $$
+DECLARE
+	r_blocked_user record;
+begin
+  for r_blocked_user in select * from blocked_user loop 
+	  if r_blocked_user.email = NEW.email then
+		raise exception using message = 'This email has been blocked. Contact the admin if you think this is a mistake.';
+		return OLD;
+	  end if;
+  end loop;
+  RETURN NEW;
+end;
+$$;
+
+CREATE TRIGGER if_user_blocked 
+BEFORE INSERT ON db_user
+FOR EACH ROW 
+EXECUTE PROCEDURE check_if_user_blocked();
  
 -----------------------------------------------------------
 DELETE FROM db_user;
 INSERT INTO db_user(email, username, date_of_birth, firstname, lastname, hash,warning) 
 VALUES('ro@gmail.com','ro','2000-01-01','r','p','temphash',0);
+
+
+-- INSERT INTO db_user(email, username, date_of_birth, firstname, lastname, hash,warning) 
+-- VALUES('rp@gmail.com','rp','2000-01-01','r','p','temphash',0);
+
 
 INSERT INTO movie(movie_id, title, platform) VALUES('1111','Test','Netflix');
 

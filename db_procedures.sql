@@ -28,6 +28,7 @@ end;
 $$;
 
 -----------------search function for movies, ordered by rating-----------------------------
+-- Frontend Done
 
 create or replace function search_movies_by_rating (
   dob Date,
@@ -78,6 +79,8 @@ $$;
 select search_movies_by_rating('2000-11-11', 'g');
 
 ------------------------search function for celebs------------------------------------
+-- Frontend Done
+
 
 create or replace function search_celebs (
   celeb_name varchar(100)
