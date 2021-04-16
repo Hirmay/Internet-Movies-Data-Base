@@ -372,6 +372,8 @@ def movie():
                         cur.execute("SELECT warning from db_user where username=%s", [username])
                         temp = cur.fetchone()
                         print(temp)
+                        if temp == None:
+                            return redirect("/logout")
                         if temp[0]==None:
                             warns = 0
                         else:
@@ -394,7 +396,9 @@ def movie():
                             print(query)
                             cur.execute(query)
                             if warns == 3:
-                                cur.execute("insert into blocked_user values(email) delete from db_user where username=...")
+                                email = session.get("email")
+                                cur.execute("insert into blocked_user values(%s);", [email]) 
+                                cur.execute("delete from db_user where username=%s;", [username])
                             con.commit()
                             cur.close()
             return render_template("movie.html", movies=rows, cast_len=cast_len, reviews_len=reviews_len, reviews=r, cast=cast)
@@ -573,20 +577,23 @@ def register():
         password_hash = generate_password_hash(password)
 
         # Adding the new user to database
-        cur.execute("INSERT INTO db_user (firstname, lastname, date_of_birth, username, email, hash) VALUES(%s,%s,%s,%s,%s,%s)", [first_name,last_name, dob, username, email_id, password_hash])
-        con.commit()
-        # Now extracting the user id
-        
-        cur.execute("SELECT * FROM db_user WHERE username=%s", [username])
-        rows = cur.fetchall()
-        # print(rows)
-        session["username"] = rows[0][1]
-        session["name"] = rows[0][3]
-        flash("Welcome " + session.get("name"))
+        try:
+            cur.execute("INSERT INTO db_user (firstname, lastname, date_of_birth, username, email, hash) VALUES(%s,%s,%s,%s,%s,%s)", [first_name,last_name, dob, username, email_id, password_hash])
+            con.commit()
+            # Now extracting the user id
+            
+            cur.execute("SELECT * FROM db_user WHERE username=%s", [username])
+            rows = cur.fetchall()
+            # print(rows)
+            session["username"] = rows[0][1]
+            session["name"] = rows[0][3]
+            session["email"] = rows[0][0]
+            flash("Welcome " + session.get("name"))
 
-        return redirect("/")
-    else:
-        return render_template("register.html")
+            return redirect("/")
+        except Exception as e:
+            flash("This email has been blocked. Contact the admin if you think this is a mistake.")  
+    return render_template("register.html")
 
 @app.route("/logout")
 def logout():
