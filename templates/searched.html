@@ -73,7 +73,7 @@
           </th>
           <th scope = "col">
 	      {% if session.username == "admin" %}
-              		<a class="nav-link" href={{ url_for('delete-celebrity', person_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>	
+              		<a class="nav-link" href={{ url_for('delete_celebrity', person_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>	
 	      {% else %}		
               		<a class="nav-link" href={{ url_for('celebrity', person_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>
           	{% endif %}
