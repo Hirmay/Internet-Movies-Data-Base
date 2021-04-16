@@ -16,7 +16,7 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',
-    password = '123ketki',
+    password = 'tirth177',
     host = 'localhost',
 )
 
@@ -160,7 +160,46 @@ def admin_delete():
             # display results
             return render_template('delete_searched.html', results=results, form=search) 
     else:
-        return render_template("admin_delete.html", form=search)    
+        return render_template("admin_delete.html", form=search) 
+
+
+@app.route("/celebrity", methods=["GET", "POST"])
+@login_required
+def celebrity():
+    movie_id = request.args.get('person_id')
+    cur.execute("SELECT * FROM celebrity WHERE person_id=%s", [movie_id])
+    rows = cur.fetchone()
+    print(rows)
+    #cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
+    #rows = cur.fetchone()
+    username = session.get("username")
+    cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
+    datee = cur.fetchall()
+    query = "SELECT display_celeb_movies( '" + rows[0] + "' , '"+ str(datee[0][0]) + "' );" 
+# cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
+# cur.callproc('search_movie',[datee[0], search_string])
+# print(query)
+    cur.execute(query)
+    results = cur.fetchall()
+    print(results)
+    if len(results) == 1:
+        rtuple =  results[0][0] 
+        query = "SELECT movie_id, title FROM movie where movie_id in ( '" + rtuple + "' ) ;"
+    else:
+        rtuple = list()
+        for r in results:
+            rtuple.append(r[0])
+        rtuple = tuple(rtuple)
+        # print(rtuple)
+        query = "SELECT movie_id, title FROM movie where movie_id in " + str(rtuple) + " ;"
+    # print(query)
+    cur.execute(query)
+    results = cur.fetchall()
+    return render_template("celebrity.html", celebrity=rows, l=len(results), results=results)
+
+
+
+
     
 @app.route("/movie", methods=["GET", "POST"])
 @login_required
@@ -202,7 +241,7 @@ def search():
                 datee = cur.fetchall()
                 print(datee)
                 print(search_string)
-                query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
+                query = "SELECT search_movies_by_rating( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
             # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
             # cur.callproc('search_movie',[datee[0], search_string])
             # print(query)
@@ -223,29 +262,28 @@ def search():
                 cur.execute(query)
                 results = cur.fetchall()
             elif option == 'Celebrity':
-                cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
-                datee = cur.fetchall()
-                print(datee)
                 print(search_string)
-                query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
+                query = "SELECT search_celebs( '" + search_string + "' );" 
             # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
             # cur.callproc('search_movie',[datee[0], search_string])
             # print(query)
                 cur.execute(query)
                 # print(results)
                 results = cur.fetchall()
-            elif option == 'Director':
-                cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
-                datee = cur.fetchall()
-                print(datee)
-                print(search_string)
-                query = "SELECT search_movies( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
-            # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
-            # cur.callproc('search_movie',[datee[0], search_string])
-            # print(query)
+                if len(results) == 1:
+                    rtuple =  results[0][0] 
+                    query = "SELECT person_id, firstname, lastname FROM celebrity where person_id in ( '" + rtuple + "' ) ;"
+                else:
+                    rtuple = list()
+                    for r in results:
+                        rtuple.append(r[0])
+                    rtuple = tuple(rtuple)
+                    # print(rtuple)
+                    query = "SELECT person_id, CONCAT(firstname, ' ', lastname) FROM celebrity where person_id in " + str(rtuple) + " ;"
+                # print(query)
                 cur.execute(query)
-                # print(results)
                 results = cur.fetchall()
+                print(results)
             else:
                 cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
                 datee = cur.fetchall()
@@ -258,8 +296,7 @@ def search():
                 cur.execute(query)
                 # print(results)
                 results = cur.fetchall()
-                
-                # cur.execute("SELECT movie_id, title FROM movie where movie_id in %s", results)
+            
             # flash(results)
             # Run query to see results
         if not results:

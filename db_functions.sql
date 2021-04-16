@@ -21,7 +21,7 @@ as
 $$
 DECLARE
 BEGIN
-	raise exception using message = 'Tirth madarchod';
+	raise exception using message = 'This is an error';
 END;
 $$;
 

@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Movie
+{% endblock %}
+
+{% block main %}
+
+<h1 style="background-color:DeepSkyBlue;">
+{{celebrity[1]}} {{celebrity[2]}}
+</h1>
+
+<h3 style="background-color:snow;">
+        Movies Worked in:
+</h3>
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+            <th scope="col">
+              No.
+            </th>
+            <th scope="col">
+              Name
+            </th>
+      </tr>
+    </thead>
+    <tbody>
+            
+          {% for m in range(1, l+1)%}
+          <tr>
+          <th scope="col">
+              {{ m }}
+          </th>
+          <th scope = "col">
+              <a class="nav-link" href={{ url_for('movie', movie_id=results[m-1][0]) }}>{{ results[m-1][1]  }}</a></li>
+          </th>
+            
+          {% endfor %}
+          </tr>
+
+    </tbody>
+
+  </table>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
