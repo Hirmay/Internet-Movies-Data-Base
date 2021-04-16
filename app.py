@@ -131,14 +131,17 @@ def admin_add():
         production_cost = request.form.get("production_cost")
         rating = request.form.get("rating")
         rated = request.form.get("rated")
-        released_date = request.form.get("released_date")
+        release_date = request.form.get("released_date")
         platform = request.form.get("platform")
         likes = request.form.get("likes")
         runtime = request.form.get("runtime")
         director = request.form.get("director")
-        #cur.execute("INSERT INTO movie (movie_id, title, production_cost, rating, rated, released_date, platform, likes, runtime, director) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [movie_id, title, production_cost, rating, rated, released_date, platform, likes, runtime, director])
-        #con.commit()     
+        if rating == "R ":
+            rating == "R"
+        cur.execute("INSERT INTO movie (movie_id, title, production_cost, rating, rated, release_date, platform, likes, runtime, director) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [movie_id, title, production_cost, rating, rated, release_date, platform, likes, runtime, director])
+        con.commit()     
         flash("Movie Added")
+        return render_template("admin_add.html")
     else:
         return render_template("admin_add.html")
 
