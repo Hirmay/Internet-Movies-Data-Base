@@ -18,11 +18,8 @@ con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',    
     host = 'localhost',
-<<<<<<< Updated upstream
     password='tirth177'
-=======
-    password = '123ketki'
->>>>>>> Stashed changes
+
 )
 
 # Cursor Testing
