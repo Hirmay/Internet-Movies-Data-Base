@@ -149,11 +149,11 @@ def admin_add():
 @app.route("/delete-celebrity", methods=["GET", "POST"])
 @login_required
 def delete_celebrity():
-    person_id = cur.execute("SELECT * FROM celebrity WHERE person_id=%s", [person_id_id])
+    person_id = request.args.get('person_id')
+    cur.execute("SELECT * FROM celebrity WHERE person_id=%s", [person_id])
     rows = cur.fetchone()
     print(rows)
     if request.method == "POST":
-        person_id = request.args.get('person_id')
         cur.execute("DELETE FROM celebrity WHERE person_id=%s", [person_id])
         con.commit()
         flash("Celebrity has been deleted")
@@ -175,21 +175,24 @@ def delete_celebrity():
         cur.execute(query)
         results = cur.fetchall()
         print(results)
-        if len(results) == 1:
-            rtuple =  results[0][0] 
-            query = "SELECT movie_id, title FROM movie where movie_id in ( '" + rtuple + "' ) ;"
+        if len(results) > 0:
+            if len(results) == 1:
+                rtuple =  results[0][0] 
+                query = "SELECT movie_id, title FROM movie where movie_id in ( '" + rtuple + "' ) ;"
+            else:
+                rtuple = list()
+                for r in results:
+                    rtuple.append(r[0])
+                rtuple = tuple(rtuple)
+                # print(rtuple)
+                query = "SELECT movie_id, title FROM movie where movie_id in " + str(rtuple) + " ;"
+            # print(query)
+            cur.execute(query)
+            results = cur.fetchall()
+            return render_template("celebrity.html", celebrity=rows, l=len(results), results=results)
         else:
-            rtuple = list()
-            for r in results:
-                rtuple.append(r[0])
-            rtuple = tuple(rtuple)
-            # print(rtuple)
-            query = "SELECT movie_id, title FROM movie where movie_id in " + str(rtuple) + " ;"
-        # print(query)
-        cur.execute(query)
-        results = cur.fetchall()
-        return render_template("celebrity.html", celebrity=rows, l=len(results), results=results)
-    
+            return render_template("celebrity.html", celebrity=rows, l=0, results=None) 
+        
 @app.route("/celebrity")
 @login_required
 def celebrity():
