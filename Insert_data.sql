@@ -38,3 +38,10 @@ CSV HEADER;
 
 INSERT INTO celebrity (person_id, firstname, lastname, birthyear, gender) VALUES(501, 'Tom', 'Holland', 1990, 'Male'); 
 INSERT INTO celebrity (person_id, firstname, lastname, birthyear, gender) VALUES(502, 'Robert', 'Doweny Jr.', 1980, 'Male'); 
+
+
+insert into abusive_words(words) values('fuck');
+insert into abusive_words(words) values('fucking');
+insert into abusive_words(words) values('motherfucker');
+insert into abusive_words(words) values('fucker');
+insert into abusive_words(words) values('ass');
