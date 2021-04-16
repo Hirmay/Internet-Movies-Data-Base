@@ -327,6 +327,11 @@ def movie():
     cur = con.cursor()
     username = session.get("username")
     movie_id = request.args.get('movie_id')
+
+    # cur.execute("SELECT display_movies(%s);", [movie_id])
+    # rows = cur.fetchone()
+    # l = len(rows)
+
     cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
     rows = cur.fetchone()
     cur.execute("SELECT celebrity.person_id, CONCAT(celebrity.firstname, ' ', celebrity.lastname), movie_cast.role FROM celebrity, movie_cast, movie Where movie.movie_id=%s and movie.movie_id = movie_cast.movie_id and celebrity.person_id = movie_cast.person_id;", [movie_id])
@@ -419,14 +424,18 @@ def search():
         search_string = search.data['search']
         if search.data['search'] != '':
             if option == 'Movie':
+                # cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
+                # datee = cur.fetchall()
+                # # print(datee)
+                # # print(search_string)
+                # query = "SELECT search_movies_by_likes( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
+                # cur.execute(query)
+                # results = cur.fetchall()
                 cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
                 datee = cur.fetchall()
-                print(datee)
-                print(search_string)
+                # print(datee)
+                # print(search_string)
                 query = "SELECT search_movies_by_rating( '"+ str(datee[0][0]) + "' , '" + search_string + "' );" 
-            # cur.execute("CALL search_movie(%s,%s);",[datee[0], search_string])
-            # cur.callproc('search_movie',[datee[0], search_string])
-            # print(query)
                 cur.execute(query)
                 results = cur.fetchall()
                 print(results)
