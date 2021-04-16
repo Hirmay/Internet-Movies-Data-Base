@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Movie-Filter
+{% endblock %}
+
+{% block main %}
+
+    <form method="post">
+	<div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="genre" type="text" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Genre">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="min" type="int" pattern=".{1,}"   required title="Can not leave the field empty" placeholder="Minimum Rating">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="max" type="int" pattern=".{1,}"   required title="Can not leave the field empty" placeholder="Maximum Rating">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="before" type="date" pattern=".{1,}"   required title="Can not leave the field empty" placeholder="Released Before">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="after" type="date" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Released After">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="platform" type="text" pattern=".{2,}"   required title="Can not leave the field empty" placeholder="Platform">
+        </div>
+
+        <button class="btn btn-primary" type="submit">Filter Movie</button>
+    </form>
+<br>
+    <div class="alert alert-primary" role="alert">
+        Filter the movie.
+    </div>
+
+{% endblock %}

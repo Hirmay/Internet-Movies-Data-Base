@@ -18,8 +18,12 @@ con = psycopg2.connect(
     database = 'mwdb',
     user = 'postgres',    
     host = 'localhost',
+<<<<<<< Updated upstream
     password='tirth177'
 
+=======
+    password = '123ketki'
+>>>>>>> Stashed changes
 )
 
 # Cursor Testing
@@ -147,6 +151,31 @@ def show_error():
 
 
 
+@app.route("/filter", methods=["GET", "POST"])
+@login_required
+def movie_filter():
+    if request.method == "POST":
+        genre = request.form.get("genre")
+        min_rating = request.form.get("min")
+        max_rating = request.form.get("max")
+        before = request.form.get("before")
+        after = request.form.get("after")
+        platform = request.form.get("platform") 
+        x = '1'
+        y= '2'
+        cur.execute("SELECT * from movie where movie_id in (%s,%s) "[x,y])
+        results = cur.fetchall()
+        movies = []
+        for result in results:
+            result = result[0][1:len(result[0])-1]
+            temp = list(map(str, result.split(',')))
+            movies.append(temp)
+        return render_template("filtered.html", movies = movies)
+    else:
+        return render_template("movie_filter.html")
+
+
+
 
 @app.route("/admin")
 @admin_only
@@ -216,6 +245,7 @@ def admin_add():
         flash("Movie Added")
         return render_template("admin_add.html")
     else:
+        flash("Movie Added")
         return render_template("admin_add.html")
 
 
