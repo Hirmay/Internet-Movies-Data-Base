@@ -313,20 +313,23 @@ def search():
                 cur.execute(query)
                 # print(results)
                 results = cur.fetchall()
-                if len(results) == 1:
-                    rtuple =  results[0][0] 
-                    query = "SELECT person_id, firstname, lastname FROM celebrity where person_id in ( '" + rtuple + "' ) ;"
+                if len(results) > 0:
+                    if len(results) == 1:
+                        rtuple =  results[0][0] 
+                        query = "SELECT person_id, firstname, lastname FROM celebrity where person_id in ( '" + rtuple + "' ) ;"
+                    else:
+                        rtuple = list()
+                        for r in results:
+                            rtuple.append(r[0])
+                        rtuple = tuple(rtuple)
+                        # print(rtuple)
+                        query = "SELECT person_id, CONCAT(firstname, ' ', lastname) FROM celebrity where person_id in " + str(rtuple) + " ;"
+                    # print(query)
+                    cur.execute(query)
+                    results = cur.fetchall()
                 else:
-                    rtuple = list()
-                    for r in results:
-                        rtuple.append(r[0])
-                    rtuple = tuple(rtuple)
-                    # print(rtuple)
-                    query = "SELECT person_id, CONCAT(firstname, ' ', lastname) FROM celebrity where person_id in " + str(rtuple) + " ;"
-                # print(query)
-                cur.execute(query)
-                results = cur.fetchall()
-                print(results)
+                    flash('No results found!')
+                    return render_template('search.html', form=search)       
             else:
                 cur.execute("SELECT date_of_birth FROM db_user WHERE username=%s", [username])
                 datee = cur.fetchall()
