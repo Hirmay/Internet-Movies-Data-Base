@@ -5,7 +5,8 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
 from classes import *
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 # from flask_migrate import Migrate
 
@@ -15,9 +16,10 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 # IMPORTANT
 con = psycopg2.connect(
     database = 'mwdb',
-    user = 'postgres',
+    user = 'postgres',    
     host = 'localhost',
     password='tirth177'
+
 )
 
 # Cursor Testing
@@ -154,13 +156,43 @@ def admin():
 @app.route("/insights")
 @admin_only
 def insights():
+    results_genre= []
+    results_ott = []
     query = "select get_genre_rating();" 
     cur.execute(query)
-    results_genre = cur.fetchall()
+    results = cur.fetchall()
+    for result in results:
+        result = result[0][1:len(result[0])-1]
+        temp = list(map(str, result.split(',')))
+        results_genre.append(temp)
+    """y = np.array([float(results_genre[0][1]),float(results_genre[1][1]),float(results_genre[2][1]),float(results_genre[3][1]),float(results_genre[4][1])])
+    labels = np.array([results_genre[0][0],results_genre[1][0],results_genre[2][0],results_genre[3][0],results_genre[4][0]])
+
+
+
+    plt.bar(labels,y)
+    plt.title('Ratings per Genre')
+    plt.savefig('0.png')"""
     query = "select get_ott_rating();" 
     cur.execute(query)
-    results_ott = cur.fetchall()    
-    return render_template("insights.html", results_genre=results_genre, results_ott = results_ott)
+    results = cur.fetchall() 
+    for result in results:
+        result = result[0][1:len(result[0])-1]
+        temp = list(map(str, result.split(',')))
+        results_ott.append(temp)
+    """y = np.array([float(results_ott[0][1])/float(results_ott[0][2]),float(results_ott[1][1])/float(results_ott[1][2]),float(results_ott[2][1])/float(results_ott[2][2]),float(results_ott[3][1])/float(results_ott[3][2])])
+    labels = np.array([results_ott[0][0],results_ott[1][0],results_ott[2][0],results_ott[3][0]])
+    plt.bar(labels,y)
+    plt.title('OTT Ratings and total movies with it')
+    plt.savefig('1.png')
+    y = np.array([float(results_ott[0][2]),float(results_ott[1][2]),float(results_ott[2][2]),float(results_ott[3][2])])
+    labels = [results_ott[0][0],results_ott[1][0],results_ott[2][0],results_ott[3][0]]
+
+    plt.pie(y, labels = labels)
+    plt.title('OTT Ratings distribution of movies')
+    plt.savefig('2.png')"""
+    
+    return render_template("insights.html")
 
 
 @app.route("/admin-add", methods=["GET", "POST"])
