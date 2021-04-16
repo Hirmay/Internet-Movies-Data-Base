@@ -13,10 +13,24 @@ CREATE TABLE Production_company(
     company_name varchar(50) PRIMARY KEY,
     headquarter varchar(40)
 );
+alter table Production_company add column total_produced int;
+
+do 
+$$
+DECLARE
+    r_prod record;
+begin
+    for r_prod in select * from movie_produced_by loop
+      update Production_company set total_produced = total_produced+1 
+      where company_name =r_prod.company_name;
+    end loop;
+end;
+$$;
 
 CREATE TABLE ott_platform(
     platform_name varchar(20) Primary KEY
 );
+alter table ott_platform add column total int;
 
 CREATE TABLE movie(
     movie_id varchar(10) PRIMARY KEY,
@@ -50,6 +64,9 @@ CREATE TABLE db_user(
     lastname varchar(20) NOT NULL,
     hash varchar(100) NOT NULL,
     warning int
+);
+CREATE TABLE blocked_user(
+    email varchar(50) PRIMARY KEY
 );
 
 CREATE TABLE movie_review(
@@ -149,9 +166,27 @@ CREATE TABLE wishlist(
     movie_id varchar(10)
 );
 
+CREATE TABLE genre_rating(
+    genre varchar(20),
+    rating float
+);
+CREATE TABLE ott_rating(
+    platform varchar(40),
+    rating float,
+    total int
+);
 
 CREATE TABLE abusive_words(
     words varchar(20)
+);
+
+CREATE TABLE liked_movies(
+    movie_id varchar(10),
+    username varchar(20)
+);
+CREATE TABLE upvoted_reviews(
+    review_id varchar(10),
+    username varchar(20)
 );
 
 DROP TABLE show_cast;
@@ -172,6 +207,3 @@ DROP TABLE tv_show;
 DROP TABLE movie;
 DROP TABLE ott_platform;
 DROP TABLE abusive_words;
-
-
-
