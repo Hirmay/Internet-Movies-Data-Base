@@ -66,6 +66,7 @@ EXECUTE PROCEDURE delete_celeb();
 delete from celebrity where person_id = '20';
 
 -----------if review contains an abusive word trigger will fire-------------
+-- Added to Frontend
 
 CREATE OR REPLACE FUNCTION check_abusive() RETURNS TRIGGER
 LANGUAGE plpgsql

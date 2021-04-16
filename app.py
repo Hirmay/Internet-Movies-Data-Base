@@ -207,6 +207,8 @@ def celebrity():
 @app.route("/movie", methods=["GET", "POST"])
 @login_required
 def movie():
+    cur = con.cursor()
+    username = session.get("username")
     movie_id = request.args.get('movie_id')
     cur.execute("SELECT * FROM movie WHERE movie_id=%s", [movie_id])
     rows = cur.fetchone()
@@ -223,7 +225,34 @@ def movie():
                     flash("Movie has been added to the watchlist")
                 except:
                     review = request.form["review"]
-                    flash(review)
+                    # flash(review)
+                    cur.execute("SELECT warning from db_user where username=%s", [username])
+                    temp = cur.fetchone()
+                    print(temp)
+                    if temp[0]==None:
+                        warns = 0
+                    else:
+                        warns = temp[0]
+                    warns += 1
+                    try:
+                        cur.execute("SELECT count(*) from movie_review;")
+                        review_id = cur.fetchone()[0] + 1
+                        # print(review_id)
+                        cur.execute("INSERT INTO movie_review(review_id, posted_on, content, up_votes, movie_id, username) VALUES (%s, current_date, %s, 0, %s, %s);", [review_id, review, movie_id, username])
+                        con.commit()
+                    except Exception as e:
+                        # flash(e)
+                        con.commit()
+                        # cur.open()
+                        # cur = con.cursor()
+                        flash("Use of abusive language detected. You are given a warining. If your warnings exceed 3 then your account will be banned!")
+                        username = session.get("username")
+                        query = "UPDATE db_user set warning=" + str(warns) + " where username='" + username + "' ;"
+                        print(query)
+                        cur.execute(query)
+                        con.commit()
+                        cur.close()
+                        
             return render_template("movie.html", movies=rows, l=len(rows))
     else:
         return render_template("movie.html", movies=rows, l=len(rows))
@@ -231,6 +260,7 @@ def movie():
 @app.route("/search", methods=["GET", "POST"])
 @login_required
 def search():
+    cur = con.cursor()
     search = Search_M_W(request.form)
     # print(search.data['select'])
     option = search.data['select']
@@ -315,6 +345,7 @@ def search():
     
 @app.route('/searched')
 def searched(search):
+    cur = con.cursor()
     results = []
     search_string = search.data['search']
     if search.data['search'] == '':
@@ -332,7 +363,7 @@ def login():
 
     # forgets any user id
     session.clear()
-
+    cur = con.cursor()
     if request.method == "POST":
         username = request.form.get("username")
         username = username.lower()
@@ -362,7 +393,7 @@ def login():
 def register():
     # forgets any user
     session.clear()
-
+    cur = con.cursor()
     if request.method == "POST":
         # Checking for name
 
